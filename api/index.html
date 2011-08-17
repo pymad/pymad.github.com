@@ -1,0 +1,219 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyMad API &mdash; PyMad v0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="PyMad v0.1.0 documentation" href="../index.html" />
+    <link rel="prev" title="Plot Beta" href="../examples/demo_plot_beta.html" /> 
+  </head>
+  <body> 
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../_static/pymad-logo-text.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../examples/demo_plot_beta.html" title="Plot Beta"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PyMad API</a><ul>
+<li><a class="reference internal" href="#module-pymad">Module pymad</a><ul>
+<li><a class="reference internal" href="#module-pymad.domain.tfs">Module tfs</a></li>
+<li><a class="reference internal" href="#module-pymad.tools.run">Module run</a></li>
+<li><a class="reference internal" href="#module-pymad.tools.ls">Module ls</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../examples/demo_plot_beta.html"
+                        title="previous chapter">Plot Beta</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pymad-api">
+<h1>PyMad API<a class="headerlink" href="#pymad-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pymad">
+<h2>Module pymad<a class="headerlink" href="#module-pymad" title="Permalink to this headline">¶</a></h2>
+<p>The pymad package contains all parts of the general API.</p>
+<div class="section" id="module-pymad.domain.tfs">
+<span id="module-tfs"></span><h3>Module tfs<a class="headerlink" href="#module-pymad.domain.tfs" title="Permalink to this headline">¶</a></h3>
+<p>Created on 16 Aug 2011</p>
+<p>&#64;author: kfuchsbe</p>
+<dl class="class">
+<dt id="pymad.domain.tfs.LookupDict">
+<em class="property">class </em><tt class="descclassname">pymad.domain.tfs.</tt><tt class="descname">LookupDict</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="../_modules/pymad/domain/tfs.html#LookupDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.domain.tfs.LookupDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary like structur, which exposes the values of the keys also as attributes with the key names</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pymad.domain.tfs.TfsSummary">
+<em class="property">class </em><tt class="descclassname">pymad.domain.tfs.</tt><tt class="descname">TfsSummary</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="../_modules/pymad/domain/tfs.html#TfsSummary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.domain.tfs.TfsSummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to hold the summary table of a twiss with lowercase keys</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pymad.domain.tfs.TfsTable">
+<em class="property">class </em><tt class="descclassname">pymad.domain.tfs.</tt><tt class="descname">TfsTable</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="../_modules/pymad/domain/tfs.html#TfsTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.domain.tfs.TfsTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to hold the results of a twiss</p>
+<dl class="attribute">
+<dt id="pymad.domain.tfs.TfsTable.names">
+<tt class="descname">names</tt><a class="reference internal" href="../_modules/pymad/domain/tfs.html#TfsTable.names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.domain.tfs.TfsTable.names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the names of the elements in the twiss table</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pymad.tools.run">
+<span id="module-run"></span><h3>Module run<a class="headerlink" href="#module-pymad.tools.run" title="Permalink to this headline">¶</a></h3>
+<p>contains convenience funtions to initialize the pymad envirenment and to clean up</p>
+<p>Created on 16 Aug 2011</p>
+<p>&#64;author: kfuchsbe</p>
+<dl class="function">
+<dt id="pymad.tools.run.cleanup">
+<tt class="descclassname">pymad.tools.run.</tt><tt class="descname">cleanup</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pymad/tools/run.html#cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.tools.run.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans up the pymad service and sets the global variable back to None again.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymad.tools.run.get_pms">
+<tt class="descclassname">pymad.tools.run.</tt><tt class="descname">get_pms</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pymad/tools/run.html#get_pms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.tools.run.get_pms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the pymad-service singleton. If pymad is not initialized this raises an error</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymad.tools.run.init">
+<tt class="descclassname">pymad.tools.run.</tt><tt class="descname">init</tt><big>(</big><em>mode='cpymad'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/pymad/tools/run.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.tools.run.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the environment for using pymad in one of the possible modes. The first argument determines
+the mode (allowed values are &#8216;cpymad&#8217; and &#8216;jpymad&#8217;. If already a pymad service is running, then this function
+prints a warning and does nothing else.</p>
+<p>Arguments:
+:param mode: Can be either &#8216;cpymad&#8217; or &#8216;pymad&#8217;. This option determines which pymad-service will be initialized. The default is &#8216;cpymad&#8217;.
+:param kwargs: All the rest of the arguments are directly passed to the constructor of the created PyMadService
+:returns: the newly created pymad service if one was created.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymad.tools.run.is_initialized">
+<tt class="descclassname">pymad.tools.run.</tt><tt class="descname">is_initialized</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pymad/tools/run.html#is_initialized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.tools.run.is_initialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns true, if a pymad service is initialized, false otherwise</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pymad.tools.ls">
+<span id="module-ls"></span><h3>Module ls<a class="headerlink" href="#module-pymad.tools.ls" title="Permalink to this headline">¶</a></h3>
+<p>Created on Tue Nov 16 19:21:25 2010</p>
+<p>&#64;author: kaifox</p>
+<dl class="function">
+<dt id="pymad.tools.ls.ls_mdefs">
+<tt class="descclassname">pymad.tools.ls.</tt><tt class="descname">ls_mdefs</tt><big>(</big><em>pms=None</em><big>)</big><a class="reference internal" href="../_modules/pymad/tools/ls.html#ls_mdefs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.tools.ls.ls_mdefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>lists all the currently available model definitions from the given service</p>
+<p>Arguments:
+:param pms: the pymad service from which to retrieve the model definitions, 
+if this is None then the singleton is used</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pymad.tools.ls.ls_models">
+<tt class="descclassname">pymad.tools.ls.</tt><tt class="descname">ls_models</tt><big>(</big><em>pms=None</em><big>)</big><a class="reference internal" href="../_modules/pymad/tools/ls.html#ls_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.tools.ls.ls_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>lists all the currently created models from the given service
+Arguments:
+:param pms: the pymad service from which to retrieve the model definitions, if this is None then the singleton is used</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../examples/demo_plot_beta.html" title="Plot Beta"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Y.I. Levinsen, K. Fuchsberger (CERN) .
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

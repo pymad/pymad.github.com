@@ -1,0 +1,183 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pymad.tools.run &mdash; PyMad v0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="PyMad v0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body> 
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../../index.html"><img src="../../../_static/pymad-logo-text.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pymad.tools.run</h1><div class="highlight"><pre>
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c"># This file is part of PyMad.</span>
+<span class="c"># </span>
+<span class="c"># Copyright (c) 2011, CERN. All rights reserved.</span>
+<span class="c"># </span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c"># you may not use this file except in compliance with the License.</span>
+<span class="c"># You may obtain a copy of the License at</span>
+<span class="c"># </span>
+<span class="c"># 	http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c"># </span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c"># See the License for the specific language governing permissions and</span>
+<span class="c"># limitations under the License.</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">contains convenience funtions to initialize the pymad envirenment and to clean up</span>
+
+<span class="sd">Created on 16 Aug 2011</span>
+
+<span class="sd">@author: kfuchsbe</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">pymad.globals</span> <span class="kn">import</span> <span class="n">PyMadGlobals</span>
+
+<span class="k">class</span> <span class="nc">PyMadNotInititalizedError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<div class="viewcode-block" id="get_pms"><a class="viewcode-back" href="../../../api/index.html#pymad.tools.run.get_pms">[docs]</a><span class="k">def</span> <span class="nf">get_pms</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39; Returns the pymad-service singleton. If pymad is not initialized this raises an error &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_initialized</span><span class="p">():</span>
+        <span class="k">raise</span><span class="p">(</span><span class="n">PyMadNotInititalizedError</span><span class="p">())</span>
+    
+    <span class="k">return</span> <span class="n">PyMadGlobals</span><span class="o">.</span><span class="n">PYMAD_SERVICE</span>
+</div>
+<div class="viewcode-block" id="is_initialized"><a class="viewcode-back" href="../../../api/index.html#pymad.tools.run.is_initialized">[docs]</a><span class="k">def</span> <span class="nf">is_initialized</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39; returns true, if a pymad service is initialized, false otherwise &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="ow">not</span> <span class="n">PyMadGlobals</span><span class="o">.</span><span class="n">PYMAD_SERVICE</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="init"><a class="viewcode-back" href="../../../api/index.html#pymad.tools.run.init">[docs]</a><span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;cpymad&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Initializes the environment for using pymad in one of the possible modes. The first argument determines</span>
+<span class="sd">    the mode (allowed values are &#39;cpymad&#39; and &#39;jpymad&#39;. If already a pymad service is running, then this function</span>
+<span class="sd">    prints a warning and does nothing else. </span>
+<span class="sd">    </span>
+<span class="sd">    Arguments:</span>
+<span class="sd">    :param mode: Can be either &#39;cpymad&#39; or &#39;pymad&#39;. This option determines which pymad-service will be initialized. The default is &#39;cpymad&#39;.</span>
+<span class="sd">    :param kwargs: All the rest of the arguments are directly passed to the constructor of the created PyMadService</span>
+<span class="sd">    :returns: the newly created pymad service if one was created.</span>
+<span class="sd">     </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">if</span> <span class="n">is_initialized</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Already a pymad service running. Doing nothing.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    
+    <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="s">&#39;cpymad&#39;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">cpymad.service</span> <span class="kn">import</span> <span class="n">CpymadService</span> 
+        <span class="n">pms</span> <span class="o">=</span> <span class="n">CpymadService</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="ow">is</span> <span class="s">&#39;jpymad&#39;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">jpymad.service</span> <span class="kn">import</span> <span class="n">JPyMadService</span>
+        <span class="n">pms</span> <span class="o">=</span> <span class="n">JPyMadService</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Unknown mode &#39;&quot;</span> <span class="o">+</span> <span class="n">mode</span> <span class="o">+</span> <span class="s">&quot;&#39;! Use one of &#39;cpymad&#39; or &#39;jpymad&#39;!&quot;</span><span class="p">)</span>
+    
+    <span class="n">PyMadGlobals</span><span class="o">.</span><span class="n">PYMAD_SERVICE</span> <span class="o">=</span> <span class="n">pms</span>
+    <span class="k">return</span> <span class="n">pms</span>
+</div>
+<div class="viewcode-block" id="cleanup"><a class="viewcode-back" href="../../../api/index.html#pymad.tools.run.cleanup">[docs]</a><span class="k">def</span> <span class="nf">cleanup</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39; Cleans up the pymad service and sets the global variable back to None again. &#39;&#39;&#39;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_initialized</span><span class="p">():</span>
+        <span class="k">print</span> <span class="s">&quot;pymad is not initialized. Doing nothing.&quot;</span>
+        <span class="k">return</span>
+    
+    <span class="n">pms</span> <span class="o">=</span> <span class="n">PyMadGlobals</span><span class="o">.</span><span class="n">PYMAD_SERVICE</span>
+    <span class="n">pms</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+    <span class="n">PyMadGlobals</span><span class="o">.</span><span class="n">PYMAD_SERVICE</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    
+    </div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Y.I. Levinsen, K. Fuchsberger (CERN) .
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
