@@ -1,0 +1,204 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pymad.io.tfs &mdash; PyMad v0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="PyMad v0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body> 
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../../index.html"><img src="../../../_static/pymad-logo-text.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pymad.io.tfs</h1><div class="highlight"><pre>
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c"># This file is part of PyMad.</span>
+<span class="c"># </span>
+<span class="c"># Copyright (c) 2011, CERN. All rights reserved.</span>
+<span class="c"># </span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c"># you may not use this file except in compliance with the License.</span>
+<span class="c"># You may obtain a copy of the License at</span>
+<span class="c"># </span>
+<span class="c"># 	http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c"># </span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c"># See the License for the specific language governing permissions and</span>
+<span class="c"># limitations under the License.</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pymad.domain</span> <span class="kn">import</span> <span class="n">TfsTable</span><span class="p">,</span> <span class="n">TfsSummary</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to read tfs tables into Python objects</span>
+
+<span class="sd">    ..:author: Yngve Inntjore Levinsen &lt;Yngve.Inntjore.Levinsen@cern.ch&gt;</span>
+<span class="sd">&#39;&#39;&#39;</span>
+    
+<div class="viewcode-block" id="tfs"><a class="viewcode-back" href="../../../api/index.html#pymad.io.tfs.tfs">[docs]</a><span class="k">def</span> <span class="nf">tfs</span><span class="p">(</span><span class="n">inputfile</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Read a tfs table and returns table/parameters</span>
+<span class="sd">    </span>
+<span class="sd">    The function takes in a tfs file. It will add</span>
+<span class="sd">    all parameters into one dictionary, and the table</span>
+<span class="sd">    into another dictionary.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">      :inputfile (string): tfs file (full path)</span>
+<span class="sd">    </span>
+<span class="sd">    :return (tuple): tfs table (TfsTable object), parameters (TfsSummary object)</span>
+
+<span class="sd">    :see: pymad.domain.tfs</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inputfile</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inputfile</span><span class="o">+</span><span class="s">&#39;.tfs&#39;</span><span class="p">):</span>
+            <span class="n">inputfile</span><span class="o">+=</span><span class="s">&#39;.tfs&#39;</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inputfile</span><span class="o">+</span><span class="s">&#39;.TFS&#39;</span><span class="p">):</span>
+            <span class="n">inputfile</span><span class="o">+=</span><span class="s">&#39;.TFS&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;ERROR: &quot;</span><span class="o">+</span><span class="n">inputfile</span><span class="o">+</span><span class="s">&quot; is not a valid file path&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">=</span><span class="nb">file</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;@&#39;</span><span class="p">:</span>
+            <span class="n">_addParameter</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">l</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;*&#39;</span><span class="p">:</span> <span class="c"># beginning of vector list...</span>
+            <span class="n">names</span><span class="o">=</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">table</span><span class="o">=</span><span class="n">_read_table</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">names</span><span class="p">)</span>
+        <span class="n">l</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">TfsTable</span><span class="p">(</span><span class="n">table</span><span class="p">),</span> <span class="n">TfsSummary</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+<span class="c">##</span>
+<span class="c"># Add parameter to object</span>
+<span class="c"># </span>
+<span class="c"># Any line starting with an @ is a parameter.</span>
+<span class="c"># If that is found, this function should be called and given the line</span>
+<span class="c"># </span>
+<span class="c"># @param line The line from the file that should be added</span></div>
+<span class="k">def</span> <span class="nf">_addParameter</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="n">line</span><span class="p">):</span>
+    <span class="n">lname</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;</span><span class="si">%le</span><span class="s">&#39;</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="n">lname</span><span class="p">]</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;s&#39;</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="n">lname</span><span class="p">]</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="n">lname</span><span class="p">]</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">3</span><span class="p">])</span>
+
+<span class="c">##</span>
+<span class="c"># Reads in a table in tfs format.</span>
+<span class="c"># Input the file stream at the location</span>
+<span class="c"># where the names of the columns have just been read.</span>
+<span class="k">def</span> <span class="nf">_read_table</span><span class="p">(</span><span class="n">fstream</span><span class="p">,</span><span class="n">names</span><span class="p">):</span>
+    <span class="n">l</span><span class="o">=</span><span class="n">fstream</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="n">types</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">table</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="n">table</span><span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;$&#39;</span><span class="p">:</span>
+            <span class="n">types</span><span class="o">=</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">el</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">()):</span>
+                <span class="n">table</span><span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
+        <span class="n">l</span><span class="o">=</span><span class="n">fstream</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">typ</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span><span class="n">types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">typ</span><span class="o">==</span><span class="s">&#39;</span><span class="si">%le</span><span class="s">&#39;</span><span class="p">:</span>
+            <span class="n">table</span><span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">typ</span><span class="o">==</span><span class="s">&#39;</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">:</span>
+            <span class="n">table</span><span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">typ</span><span class="o">==</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()])):</span>
+                <span class="n">table</span><span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()][</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">table</span><span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()][</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;&quot;&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">table</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Y.I. Levinsen, K. Fuchsberger (CERN) .
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

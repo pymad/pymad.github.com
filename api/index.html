@@ -23,6 +23,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="PyMad v0.1.0 documentation" href="../index.html" />
+    <link rel="next" title="Cpymad implementation" href="../cpymad/index.html" />
     <link rel="prev" title="Plot Beta" href="../examples/demo_plot_beta.html" /> 
   </head>
   <body> 
@@ -41,6 +42,9 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
+          <a href="../cpymad/index.html" title="Cpymad implementation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
           <a href="../examples/demo_plot_beta.html" title="Plot Beta"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">home</a>|&nbsp;</li>
@@ -55,7 +59,8 @@
   <ul>
 <li><a class="reference internal" href="#">PyMad API</a><ul>
 <li><a class="reference internal" href="#module-pymad">Module pymad</a><ul>
-<li><a class="reference internal" href="#module-pymad.domain.tfs">Module tfs</a></li>
+<li><a class="reference internal" href="#module-pymad.io.tfs">Module pymad.io.tfs</a></li>
+<li><a class="reference internal" href="#module-pymad.domain.tfs">Module pymad.domain.tfs</a></li>
 <li><a class="reference internal" href="#module-pymad.tools.run">Module run</a></li>
 <li><a class="reference internal" href="#module-pymad.tools.ls">Module ls</a></li>
 </ul>
@@ -67,6 +72,9 @@
   <h4>Previous topic</h4>
   <p class="topless"><a href="../examples/demo_plot_beta.html"
                         title="previous chapter">Plot Beta</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../cpymad/index.html"
+                        title="next chapter">Cpymad implementation</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/api/index.txt"
@@ -98,14 +106,48 @@
 <div class="section" id="module-pymad">
 <h2>Module pymad<a class="headerlink" href="#module-pymad" title="Permalink to this headline">¶</a></h2>
 <p>The pymad package contains all parts of the general API.</p>
+<div class="section" id="module-pymad.io.tfs">
+<span id="module-pymad-io-tfs"></span><h3>Module pymad.io.tfs<a class="headerlink" href="#module-pymad.io.tfs" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-tfs"></span><p>Function to read tfs tables into Python objects</p>
+<p><em>Module author: Yngve Inntjore Levinsen &lt;<a class="reference external" href="mailto:Yngve&#46;Inntjore&#46;Levinsen&#37;&#52;&#48;cern&#46;ch">Yngve<span>&#46;</span>Inntjore<span>&#46;</span>Levinsen<span>&#64;</span>cern<span>&#46;</span>ch</a>&gt;</em></p>
+<dl class="function">
+<dt id="pymad.io.tfs.tfs">
+<tt class="descclassname">pymad.io.tfs.</tt><tt class="descname">tfs</tt><big>(</big><em>inputfile</em><big>)</big><a class="reference internal" href="../_modules/pymad/io/tfs.html#tfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.io.tfs.tfs" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="function">
+<dt id="tfs.tfs">
+<tt class="descclassname">tfs.</tt><tt class="descname">tfs</tt><big>(</big><em>inputfile</em><big>)</big><a class="headerlink" href="#tfs.tfs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Read a tfs table and returns table/parameters</p>
+<p>The function takes in a tfs file. It will add
+all parameters into one dictionary, and the table
+into another dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputfile</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; tfs file, full path</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field"><td>&nbsp;</td><td class="field-body">In case file path is not found</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">tuple containing (tfs table (TfsTable), parameters (TfsSummary))</td>
+</tr>
+</tbody>
+</table>
+<p>See also: <a class="reference internal" href="#module-pymad.domain.tfs" title="pymad.domain.tfs"><tt class="xref py py-mod docutils literal"><span class="pre">pymad.domain.tfs</span></tt></a></p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-pymad.domain.tfs">
-<span id="module-tfs"></span><h3>Module tfs<a class="headerlink" href="#module-pymad.domain.tfs" title="Permalink to this headline">¶</a></h3>
-<p>Created on 16 Aug 2011</p>
-<p>&#64;author: kfuchsbe</p>
+<span id="module-pymad-domain-tfs"></span><h3>Module pymad.domain.tfs<a class="headerlink" href="#module-pymad.domain.tfs" title="Permalink to this headline">¶</a></h3>
+<p>Created on 16 Aug 2011
+.. module:: tfs
+.. moduleauthor:: kfuchsbe</p>
 <dl class="class">
 <dt id="pymad.domain.tfs.LookupDict">
 <em class="property">class </em><tt class="descclassname">pymad.domain.tfs.</tt><tt class="descname">LookupDict</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="../_modules/pymad/domain/tfs.html#LookupDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymad.domain.tfs.LookupDict" title="Permalink to this definition">¶</a></dt>
-<dd><p>A dictionary like structur, which exposes the values of the keys also as attributes with the key names</p>
+<dd><p>A dictionary-like structure, which exposes the values of the keys also as attributes with the key names</p>
 </dd></dl>
 
 <dl class="class">
@@ -150,10 +192,21 @@
 <dd><p>Initializes the environment for using pymad in one of the possible modes. The first argument determines
 the mode (allowed values are &#8216;cpymad&#8217; and &#8216;jpymad&#8217;. If already a pymad service is running, then this function
 prints a warning and does nothing else.</p>
-<p>Arguments:
-:param mode: Can be either &#8216;cpymad&#8217; or &#8216;pymad&#8217;. This option determines which pymad-service will be initialized. The default is &#8216;cpymad&#8217;.
-:param kwargs: All the rest of the arguments are directly passed to the constructor of the created PyMadService
-:returns: the newly created pymad service if one was created.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mode</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Can be either &#8216;cpymad&#8217; or &#8216;pymad&#8217;. This option determines which pymad-service will be initialized. The default is &#8216;cpymad&#8217;.</li>
+<li><strong>kwargs</strong> &#8211; All the rest of the arguments are directly passed to the constructor of the created PyMadService</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the newly created pymad service if one was created.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -203,6 +256,9 @@ Arguments:
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="../cpymad/index.html" title="Cpymad implementation"
+             >next</a> |</li>
         <li class="right" >
           <a href="../examples/demo_plot_beta.html" title="Plot Beta"
              >previous</a> |</li>
