@@ -35,7 +35,7 @@ Second method, manual installation:
 
     * Download the Mad-X source from 
       `svn <http://svnweb.cern.ch/world/wsvn/madx/trunk/madX/?op=dl&rev=0&isdir=1>`_ 
-      andunpack it. 
+      and unpack it. 
     * Enter the folder madX and run the commands
       
       .. code-block:: sh
