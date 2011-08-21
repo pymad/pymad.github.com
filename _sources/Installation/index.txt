@@ -1,0 +1,14 @@
+
+
+Installation Instructions
+*************************
+
+Installation of PyMad is different depending on which underlying modules you want.
+
+For JPyMad, you first need JMad which you can obtain `here <http://cern.ch/jmad/>`
+
+For CPymad on a 64 bit Linux machine with afs available, it is enough to source the script that we 
+currently providere in /afs/cern.ch/user/y/ylevinse/public/setupCPYMAD.sh
+Note that this location might change without notice.
+
+
