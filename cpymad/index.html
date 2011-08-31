@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="PyMad v0.1.0 documentation" href="../index.html" />
-    <link rel="next" title="JPyMad API" href="../jpymad/index.html" />
     <link rel="prev" title="PyMad API" href="../api/index.html" /> 
   </head>
   <body> 
@@ -42,9 +41,6 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../jpymad/index.html" title="JPyMad API"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
           <a href="../api/index.html" title="PyMad API"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">home</a>|&nbsp;</li>
@@ -58,7 +54,7 @@
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Cpymad implementation</a><ul>
-<li><a class="reference internal" href="#module-cern-cpymad-madx">Module cern.cpymad.madx</a></li>
+<li><a class="reference internal" href="#module-cern-madx">Module cern.madx</a></li>
 <li><a class="reference internal" href="#module-cern.cpymad.model">Module cern.cpymad.model</a></li>
 </ul>
 </li>
@@ -67,9 +63,6 @@
   <h4>Previous topic</h4>
   <p class="topless"><a href="../api/index.html"
                         title="previous chapter">PyMad API</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../jpymad/index.html"
-                        title="next chapter">JPyMad API</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/cpymad/index.txt"
@@ -99,9 +92,117 @@
   <div class="section" id="cpymad-implementation">
 <h1>Cpymad implementation<a class="headerlink" href="#cpymad-implementation" title="Permalink to this headline">¶</a></h1>
 <p>Documentation of the cpymad implementation</p>
-<div class="section" id="module-cern-cpymad-madx">
-<h2>Module cern.cpymad.madx<a class="headerlink" href="#module-cern-cpymad-madx" title="Permalink to this headline">¶</a></h2>
-<p>Documentation not yet available</p>
+<div class="section" id="module-cern-madx">
+<h2>Module cern.madx<a class="headerlink" href="#module-cern-madx" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-cern.madx"></span><span class="target" id="module-madx"></span><p><em>Module author: Yngve Inntjore Levinsen &lt;Yngve.Inntjore.Levinsen.at.cern.ch&gt;</em></p>
+<p>Main module to interface with Mad-X library.</p>
+<dl class="class">
+<dt id="cern.madx.madx">
+<em class="property">class </em><tt class="descclassname">cern.madx.</tt><tt class="descname">madx</tt><a class="headerlink" href="#cern.madx.madx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python class which interfaces to Mad-X library</p>
+<dl class="method">
+<dt id="cern.madx.madx.aperture">
+<tt class="descname">aperture</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.aperture" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.aperture(self, sequence, pattern=[&#8216;full&#8217;], madrange=&#8217;&#8216;, columns=&#8217;name,l,angle,x,y,z,theta&#8217;, offsets=&#8217;&#8216;, fname=&#8217;&#8216;, retdict=False)</p>
+<p>Runs select+use+aperture on the sequence selected</p>
+<p>&#64;param sequence [string] name of sequence
+&#64;param fname [string,optional] name of file to store tfs table
+&#64;param pattern [list, optional] pattern to include in table
+&#64;param columns [string or list, optional] columns to include in table</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.append_model">
+<tt class="descname">append_model</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.append_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.append_model(self, model_name)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.call">
+<tt class="descname">call</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.call" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.call(self, filename)</p>
+<p>Call a file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Name of input file to call</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.command">
+<tt class="descname">command</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.command" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.command(self, cmd)</p>
+<p>Send a general Mad-X command. 
+Some sanity checks are performed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cmd</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; command</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.get_sequences">
+<tt class="descname">get_sequences</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.get_sequences" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.get_sequences(self)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.help">
+<tt class="descname">help</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.help" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.help(self, cmd=&#8217;&#8216;)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.list_of_models">
+<tt class="descname">list_of_models</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.list_of_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.list_of_models(self)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.select">
+<tt class="descname">select</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.select(self, flag, columns, pattern=[])</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.survey">
+<tt class="descname">survey</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.survey" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.survey(self, sequence, pattern=[&#8216;full&#8217;], columns=&#8217;name,l,s,angle,x,y,z,theta&#8217;, madrange=&#8217;&#8216;, fname=&#8217;&#8216;, retdict=False)</p>
+<p>Runs select+use+survey on the sequence selected</p>
+<p>&#64;param sequence [string] name of sequence
+&#64;param fname [string,optional] name of file to store tfs table
+&#64;param pattern [list, optional] pattern to include in table
+&#64;param columns [string or list, optional] columns to include in table</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.twiss">
+<tt class="descname">twiss</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.twiss" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.twiss(self, sequence, pattern=[&#8216;full&#8217;], columns=&#8217;name,s,betx,bety,x,y,dx,dy,px,py,mux,muy,l,k1l,angle,k2l&#8217;, madrange=&#8217;&#8216;, fname=&#8217;&#8216;, retdict=False)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.use">
+<tt class="descname">use</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.use" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.use(self, sequence)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.verbose">
+<tt class="descname">verbose</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.verbose(self, switch)</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-cern.cpymad.model">
 <span id="module-cern-cpymad-model"></span><h2>Module cern.cpymad.model<a class="headerlink" href="#module-cern.cpymad.model" title="Permalink to this headline">¶</a></h2>
@@ -110,8 +211,9 @@
 <p><em>Module author: Yngve Inntjore Levinsen &lt;<a class="reference external" href="mailto:Yngve&#46;Inntjore&#46;Levinsen&#37;&#52;&#48;cern&#46;ch">Yngve<span>&#46;</span>Inntjore<span>&#46;</span>Levinsen<span>&#64;</span>cern<span>&#46;</span>ch</a>&gt;</em></p>
 <dl class="class">
 <dt id="cern.cpymad.model.model">
-<em class="property">class </em><tt class="descclassname">cern.cpymad.model.</tt><tt class="descname">model</tt><big>(</big><em>model</em>, <em>optics=''</em>, <em>history=''</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>model class implementation.</p>
+<em class="property">class </em><tt class="descclassname">cern.cpymad.model.</tt><tt class="descname">model</tt><big>(</big><em>model</em>, <em>sequence=''</em>, <em>optics=''</em>, <em>histfile=''</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>model class implementation. the model spawns a madx instance in a separate process.
+this has the advantage that you can run separate models which do not affect each other.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -119,12 +221,41 @@
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>model</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Name of model to load.</li>
 <li><strong>optics</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Name of optics to load</li>
-<li><strong>history</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Name of file which will contain all Mad-X commands called.</li>
+<li><strong>histfile</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Name of file which will contain all Mad-X commands called.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="cern.cpymad.model.model.aperture">
+<tt class="descname">aperture</tt><big>(</big><em>sequence=''</em>, <em>madrange=''</em>, <em>columns='name</em>, <em>l</em>, <em>s</em>, <em>n1</em>, <em>aper_1</em>, <em>aper_2</em>, <em>aper_3</em>, <em>aper_4'</em>, <em>fname=''</em>, <em>retdict=False</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.aperture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the aperture from the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sequence</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Sequence, if empty, using default sequence.</li>
+<li><strong>madrange</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Range, if empty, the full sequence is chosen.</li>
+<li><strong>columns</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Columns in the twiss table, can also be list of strings</li>
+<li><strong>fname</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Optionally, give name of file for tfs table.</li>
+<li><strong>retdict</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Return dictionaries (default is an extended LookUpDict)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.cpymad.model.model.call">
+<tt class="descname">call</tt><big>(</big><em>filepath</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call a file in Mad-X. Give either
+full file path or relative to where script is ran
+from.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="cern.cpymad.model.model.has_optics">
 <tt class="descname">has_optics</tt><big>(</big><em>optics</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.has_optics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.has_optics" title="Permalink to this definition">¶</a></dt>
@@ -154,8 +285,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="cern.cpymad.model.model.set_optics">
-<tt class="descname">set_optics</tt><big>(</big><em>optics</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.set_optics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.set_optics" title="Permalink to this definition">¶</a></dt>
+<dt id="cern.cpymad.model.model.set_optic">
+<tt class="descname">set_optic</tt><big>(</big><em>optic</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.set_optic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set new optics.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -165,6 +296,49 @@
 </tr>
 <tr class="field"><th class="field-name" colspan="2">Raises KeyError:</th></tr>
 <tr class="field"><td>&nbsp;</td><td class="field-body">In case you try to set an optics not available in model.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.cpymad.model.model.survey">
+<tt class="descname">survey</tt><big>(</big><em>sequence=''</em>, <em>columns='name</em>, <em>l</em>, <em>s</em>, <em>angle</em>, <em>x</em>, <em>y</em>, <em>z</em>, <em>theta'</em>, <em>madrange=''</em>, <em>fname=''</em>, <em>retdict=False</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.survey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a survey on the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sequence</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Sequence, if empty, using default sequence.</li>
+<li><strong>columns</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Columns in the twiss table, can also be list of strings</li>
+<li><strong>fname</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Optionally, give name of file for tfs table.</li>
+<li><strong>retdict</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Return dictionaries (default is an extended LookUpDict)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.cpymad.model.model.twiss">
+<tt class="descname">twiss</tt><big>(</big><em>sequence='', columns=['name', 's', 'betx', 'bety', 'x', 'y', 'dx', 'dy', 'px', 'py', 'mux', 'muy', 'l', 'k1l', 'angle', 'k2l'], pattern=['full'], madrange='', fname='', retdict=False</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.twiss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.twiss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a TWISS on the model.</p>
+<p>Warning for ranges: Currently TWISS with initial conditions is NOT
+implemented!</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sequence</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Sequence, if empty, using default sequence.</li>
+<li><strong>columns</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Columns in the twiss table, can also be list of strings</li>
+<li><strong>madrange</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Optional, give name of a range defined for the model.</li>
+<li><strong>fname</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Optionally, give name of file for tfs table.</li>
+<li><strong>retdict</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Return dictionaries (default is an extended LookUpDict)</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -190,9 +364,6 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="../jpymad/index.html" title="JPyMad API"
-             >next</a> |</li>
         <li class="right" >
           <a href="../api/index.html" title="PyMad API"
              >previous</a> |</li>
