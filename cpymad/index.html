@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Cpymad implementation &mdash; PyMad v0.1.0 documentation</title>
+    <title>CPyMad implementation &mdash; PyMad v0.1.0 documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -53,7 +53,7 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Cpymad implementation</a><ul>
+<li><a class="reference internal" href="#">CPyMad implementation</a><ul>
 <li><a class="reference internal" href="#module-cern-madx">Module cern.madx</a></li>
 <li><a class="reference internal" href="#module-cern.cpymad.model">Module cern.cpymad.model</a></li>
 </ul>
@@ -90,10 +90,56 @@
           <div class="body">
             
   <div class="section" id="cpymad-implementation">
-<h1>Cpymad implementation<a class="headerlink" href="#cpymad-implementation" title="Permalink to this headline">¶</a></h1>
-<p>Documentation of the cpymad implementation</p>
+<h1>CPyMad implementation<a class="headerlink" href="#cpymad-implementation" title="Permalink to this headline">¶</a></h1>
+<p>CPyMad is designed for two use-cases.</p>
+<ul class="simple">
+<li>The first is as a replacement for
+the Mad-X interpreter, where function calls are pretty much the same, but
+are converted to Python-like syntax. The module is called <a class="reference internal" href="#module-cern.madx" title="cern.madx"><tt class="xref py py-class docutils literal"><span class="pre">cern.madx</span></tt></a>.</li>
+<li>The second is a model object, which is built on top of the new Mad-X interface.
+The model object is aimed to be using model definitions from JMad, where all the
+preliminary setup for a given machine is defined in built-in files, including knowledge
+about available optics, strength files to use for each etc. The module is called
+<a class="reference internal" href="#module-cern.cpymad.model" title="cern.cpymad.model"><tt class="xref py py-class docutils literal"><span class="pre">cern.cpymad.model</span></tt></a></li>
+</ul>
 <div class="section" id="module-cern-madx">
 <h2>Module cern.madx<a class="headerlink" href="#module-cern-madx" title="Permalink to this headline">¶</a></h2>
+<p>This module aims to provide the full functionality of the Mad-X library in a more
+convenient Python environment. As an example, when you call twiss/aperture/survey etc,
+you immediately retrieve a functional Python object containing the information from the
+table generated. Further, we try to reduce the amount of commands needed by combining
+e.g. use, select, and twiss into the twiss function itself, and define reasonable default
+patterns/columns etc.</p>
+<p>A simple use case:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">cern</span> <span class="kn">import</span> <span class="n">madx</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span>
+
+<span class="n">m</span><span class="o">=</span><span class="n">madx</span><span class="o">.</span><span class="n">madx</span><span class="p">()</span>
+
+<span class="n">m</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s">&#39;my-sequences.seq&#39;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="s">&#39;my-strengths.str&#39;</span><span class="p">)</span>
+
+<span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;beam,sequence=myseq1,particle=PROTON&#39;</span><span class="p">)</span>
+
+<span class="n">tw</span><span class="p">,</span><span class="n">summary</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span><span class="s">&#39;myseq1&#39;</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;s&#39;</span><span class="p">,</span><span class="s">&#39;betx&#39;</span><span class="p">])</span>
+
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tw</span><span class="o">.</span><span class="n">s</span><span class="p">,</span><span class="n">tw</span><span class="o">.</span><span class="n">betx</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In this example we assume that you have a file containing the Mad-X commands to set up the sequence
+and the strengths for your optics. You can then use <a class="reference internal" href="#cern.madx.madx.call" title="cern.madx.madx.call"><tt class="xref py py-meth docutils literal"><span class="pre">call()</span></tt></a> for which
+the syntax should be understandable for a Mad-X user.</p>
+<p>For anything not yet implemented in <a class="reference internal" href="#cern.madx.madx" title="cern.madx.madx"><tt class="xref py py-class docutils literal"><span class="pre">cern.madx.madx</span></tt></a>,
+the <a class="reference internal" href="#cern.madx.madx.command" title="cern.madx.madx.command"><tt class="xref py py-meth docutils literal"><span class="pre">command()</span></tt></a> function is there. You can give any normal
+Mad-X like command to this function. If you forget the <strong>;</strong> at the end, it will be
+automatically added. In the example it is used to set the beam.</p>
+<p>Finally we call twiss. If we do not give a pattern, &#8216;full&#8217; is chosen by default. Columns are also optional,
+but it is recommended to set them for speed improvement. Currently the table is first written to file and then
+parsed into a dictionary-like Python object. Each column in the table containing numerical data are in the form
+of numpy.array() objects, while strings are simple lists.</p>
+<p>Finally we choose another library to plot the result, in this case <tt class="xref py py-meth docutils literal"><span class="pre">matplotlib.pyplot.plot()</span></tt>.</p>
+<p>Test <tt class="xref py py-meth docutils literal"><span class="pre">os.system()</span></tt></p>
 <span class="target" id="module-cern.madx"></span><span class="target" id="module-madx"></span><p><em>Module author: Yngve Inntjore Levinsen &lt;Yngve.Inntjore.Levinsen.at.cern.ch&gt;</em></p>
 <p>Main module to interface with Mad-X library.</p>
 <dl class="class">
@@ -207,7 +253,7 @@ Some sanity checks are performed.</p>
 <div class="section" id="module-cern.cpymad.model">
 <span id="module-cern-cpymad-model"></span><h2>Module cern.cpymad.model<a class="headerlink" href="#module-cern.cpymad.model" title="Permalink to this headline">¶</a></h2>
 <p>Cython implementation of the model api.
-:See also: <tt class="xref py py-mod docutils literal"><span class="pre">pymad.abc.model</span></tt></p>
+See also <tt class="xref py py-class docutils literal"><span class="pre">cern.pymad.model</span></tt></p>
 <p><em>Module author: Yngve Inntjore Levinsen &lt;<a class="reference external" href="mailto:Yngve&#46;Inntjore&#46;Levinsen&#37;&#52;&#48;cern&#46;ch">Yngve<span>&#46;</span>Inntjore<span>&#46;</span>Levinsen<span>&#64;</span>cern<span>&#46;</span>ch</a>&gt;</em></p>
 <dl class="class">
 <dt id="cern.cpymad.model.model">

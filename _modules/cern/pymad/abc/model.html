@@ -1,0 +1,153 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cern.pymad.abc.model &mdash; PyMad v0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="PyMad v0.1.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body> 
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../../../index.html"><img src="../../../../_static/pymad-logo-text.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for cern.pymad.abc.model</h1><div class="highlight"><pre>
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c"># This file is part of PyMad.</span>
+<span class="c"># </span>
+<span class="c"># Copyright (c) 2011, CERN. All rights reserved.</span>
+<span class="c"># </span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c"># you may not use this file except in compliance with the License.</span>
+<span class="c"># You may obtain a copy of the License at</span>
+<span class="c"># </span>
+<span class="c"># 	http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c"># </span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c"># See the License for the specific language governing permissions and</span>
+<span class="c"># limitations under the License.</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 15 Aug 2011</span>
+
+<span class="sd">@author: kfuchsbe</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">abstractproperty</span>
+<div class="viewcode-block" id="PyMadModel"><a class="viewcode-back" href="../../../../api/index.html#cern.pymad.abc.model.PyMadModel">[docs]</a><span class="k">class</span> <span class="nc">PyMadModel</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39; The abstract class for models &#39;&#39;&#39;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+    
+    <span class="nd">@abstractproperty</span>
+<div class="viewcode-block" id="PyMadModel.name"><a class="viewcode-back" href="../../../../api/index.html#cern.pymad.abc.model.PyMadModel.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Returns the name of this model &#39;&#39;&#39;</span>
+        <span class="k">pass</span>
+    </div>
+    <span class="nd">@abstractproperty</span>
+<div class="viewcode-block" id="PyMadModel.mdef"><a class="viewcode-back" href="../../../../api/index.html#cern.pymad.abc.model.PyMadModel.mdef">[docs]</a>    <span class="k">def</span> <span class="nf">mdef</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; returns the model definition from which the model was created &#39;&#39;&#39;</span>
+        <span class="k">pass</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="PyMadModel.set_optic"><a class="viewcode-back" href="../../../../api/index.html#cern.pymad.abc.model.PyMadModel.set_optic">[docs]</a>    <span class="k">def</span> <span class="nf">set_optic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opticname</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Sets the actual optic with that of the given name. If the optic is not </span>
+<span class="sd">        contained in the definitions, then a ValueError is raised.  </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">pass</span>
+    </div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="PyMadModel.twiss"><a class="viewcode-back" href="../../../../api/index.html#cern.pymad.abc.model.PyMadModel.twiss">[docs]</a>    <span class="k">def</span> <span class="nf">twiss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seqname</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[],</span> <span class="n">elementpatterns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;.*&#39;</span><span class="p">],</span> <span class="nb">file</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Runs a twiss on the model and returns a result containing the variables and the elements given.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">pass</span>
+    </div>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Y.I. Levinsen, K. Fuchsberger (CERN) .
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
