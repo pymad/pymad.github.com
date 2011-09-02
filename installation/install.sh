@@ -15,7 +15,7 @@ prefix=$HOME/.local/
 
 # Optionally, do not delete the temporary directory
 # after installation finished..
-delete_tmp=false
+delete_tmp=true
 # The rest you don't need to worry about...
 
 if [ -e $tmp ]
