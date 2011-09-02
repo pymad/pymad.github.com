@@ -23,7 +23,6 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="PyMad v0.1.0 documentation" href="../index.html" />
-    <link rel="next" title="CPyMad implementation" href="../cpymad/index.html" />
     <link rel="prev" title="Plot Beta" href="../examples/demo_plot_beta.html" /> 
   </head>
   <body> 
@@ -42,9 +41,6 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../cpymad/index.html" title="CPyMad implementation"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
           <a href="../examples/demo_plot_beta.html" title="Plot Beta"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">home</a>|&nbsp;</li>
@@ -59,15 +55,10 @@
   <ul>
 <li><a class="reference internal" href="#">PyMad API</a><ul>
 <li><a class="reference internal" href="#module-pymad">Module pymad</a><ul>
-<li><a class="reference internal" href="#module-cern.pymad.abc">Module cern.pymad.abc</a><ul>
-<li><a class="reference internal" href="#module-cern.pymad.abc.service">Module cern.pymad.abc.service</a></li>
-<li><a class="reference internal" href="#module-cern.pymad.abc.model">Module cern.pymad.abc.model</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#additional-tools">Additional tools</a><ul>
-<li><a class="reference internal" href="#module-cern-pymad-tfs">Module cern.pymad.tfs</a></li>
+<li><a class="reference internal" href="#module-cern.pymad.io.tfs">Module cern.pymad.io.tfs</a></li>
+<li><a class="reference internal" href="#module-cern.pymad.domain.tfs">Module cern.pymad.domain.tfs</a></li>
+<li><a class="reference internal" href="#module-cern.pymad.tools.run">Module run</a></li>
+<li><a class="reference internal" href="#module-cern.pymad.tools.ls">Module ls</a></li>
 </ul>
 </li>
 </ul>
@@ -77,9 +68,6 @@
   <h4>Previous topic</h4>
   <p class="topless"><a href="../examples/demo_plot_beta.html"
                         title="previous chapter">Plot Beta</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../cpymad/index.html"
-                        title="next chapter">CPyMad implementation</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/api/index.txt"
@@ -110,131 +98,144 @@
 <h1>PyMad API<a class="headerlink" href="#pymad-api" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-pymad">
 <h2>Module pymad<a class="headerlink" href="#module-pymad" title="Permalink to this headline">¶</a></h2>
-<p>The pymad package contains all parts of the general API. The abstract classes are placed
-in <a class="reference internal" href="#module-cern.pymad.abc" title="cern.pymad.abc"><tt class="xref py py-mod docutils literal"><span class="pre">cern.pymad.abc</span></tt></a>. In additions we have some tools which are used by both implementations,
-found in <tt class="xref py py-mod docutils literal"><span class="pre">cern.pymad.tools</span></tt></p>
-<div class="section" id="module-cern.pymad.abc">
-<span id="module-cern-pymad-abc"></span><h3>Module cern.pymad.abc<a class="headerlink" href="#module-cern.pymad.abc" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="module-cern.pymad.abc.service">
-<span id="module-cern-pymad-abc-service"></span><h4>Module cern.pymad.abc.service<a class="headerlink" href="#module-cern.pymad.abc.service" title="Permalink to this headline">¶</a></h4>
-<p>Created on 15 Aug 2011</p>
+<p>The pymad package contains all parts of the general API.</p>
+<div class="section" id="module-cern.pymad.io.tfs">
+<span id="module-cern-pymad-io-tfs"></span><h3>Module cern.pymad.io.tfs<a class="headerlink" href="#module-cern.pymad.io.tfs" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-tfs"></span><p>Function to read tfs tables into Python objects</p>
+<p><em>Module author: Yngve Inntjore Levinsen &lt;<a class="reference external" href="mailto:Yngve&#46;Inntjore&#46;Levinsen&#37;&#52;&#48;cern&#46;ch">Yngve<span>&#46;</span>Inntjore<span>&#46;</span>Levinsen<span>&#64;</span>cern<span>&#46;</span>ch</a>&gt;</em></p>
+<dl class="function">
+<dt id="cern.pymad.io.tfs.tfsDict">
+<tt class="descclassname">cern.pymad.io.tfs.</tt><tt class="descname">tfsDict</tt><big>(</big><em>inputfile</em><big>)</big><a class="headerlink" href="#cern.pymad.io.tfs.tfsDict" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="function">
+<dt id="tfs.tfsDict">
+<tt class="descclassname">tfs.</tt><tt class="descname">tfsDict</tt><big>(</big><em>inputfile</em><big>)</big><a class="headerlink" href="#tfs.tfsDict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Read a tfs table and returns table/summary info</p>
+<p>The function takes in a tfs file. It will add
+all parameters into one dictionary, and the table
+into another dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputfile</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; tfs file, full path</td>
+</tr>
+<tr class="field"><th class="field-name" colspan="2">Raises ValueError:</th></tr>
+<tr class="field"><td>&nbsp;</td><td class="field-body">In case file path is not found</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">tuple containing dictionaries (tfs table , summary)</td>
+</tr>
+</tbody>
+</table>
+<p>See also: <tt class="xref py py-mod docutils literal"><span class="pre">pymad.domain.tfs</span></tt></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cern.pymad.domain.tfs">
+<span id="module-cern-pymad-domain-tfs"></span><h3>Module cern.pymad.domain.tfs<a class="headerlink" href="#module-cern.pymad.domain.tfs" title="Permalink to this headline">¶</a></h3>
+<p>Created on 16 Aug 2011
+.. module:: tfs
+.. moduleauthor:: kfuchsbe</p>
+<dl class="class">
+<dt id="cern.pymad.domain.tfs.LookupDict">
+<em class="property">class </em><tt class="descclassname">cern.pymad.domain.tfs.</tt><tt class="descname">LookupDict</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="../_modules/cern/pymad/domain/tfs.html#LookupDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.domain.tfs.LookupDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary-like structure, which exposes the values of the keys also as attributes with the key names</p>
+<dl class="method">
+<dt id="cern.pymad.domain.tfs.LookupDict.keys">
+<tt class="descname">keys</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.pymad.domain.tfs.LookupDict.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to dictionary.keys()...</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cern.pymad.domain.tfs.TfsSummary">
+<em class="property">class </em><tt class="descclassname">cern.pymad.domain.tfs.</tt><tt class="descname">TfsSummary</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="../_modules/cern/pymad/domain/tfs.html#TfsSummary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.domain.tfs.TfsSummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to hold the summary table of a twiss with lowercase keys</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cern.pymad.domain.tfs.TfsTable">
+<em class="property">class </em><tt class="descclassname">cern.pymad.domain.tfs.</tt><tt class="descname">TfsTable</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="../_modules/cern/pymad/domain/tfs.html#TfsTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.domain.tfs.TfsTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to hold the results of a twiss</p>
+<dl class="attribute">
+<dt id="cern.pymad.domain.tfs.TfsTable.names">
+<tt class="descname">names</tt><a class="reference internal" href="../_modules/cern/pymad/domain/tfs.html#TfsTable.names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.domain.tfs.TfsTable.names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the names of the elements in the twiss table</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cern.pymad.tools.run">
+<span id="module-run"></span><h3>Module run<a class="headerlink" href="#module-cern.pymad.tools.run" title="Permalink to this headline">¶</a></h3>
+<p>contains convenience funtions to initialize the pymad envirenment and to clean up</p>
+<p>Created on 16 Aug 2011</p>
 <p>&#64;author: kfuchsbe</p>
-<dl class="class">
-<dt id="cern.pymad.abc.service.PyMadService">
-<em class="property">class </em><tt class="descclassname">cern.pymad.abc.service.</tt><tt class="descname">PyMadService</tt><a class="reference internal" href="../_modules/cern/pymad/abc/service.html#PyMadService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.service.PyMadService" title="Permalink to this definition">¶</a></dt>
-<dd><p>The abstract class for a model-service.</p>
-<dl class="attribute">
-<dt id="cern.pymad.abc.service.PyMadService.am">
-<tt class="descname">am</tt><a class="reference internal" href="../_modules/cern/pymad/abc/service.html#PyMadService.am"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.service.PyMadService.am" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the active model</p>
+<dl class="function">
+<dt id="cern.pymad.tools.run.cleanup">
+<tt class="descclassname">cern.pymad.tools.run.</tt><tt class="descname">cleanup</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/cern/pymad/tools/run.html#cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.tools.run.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleans up the pymad service and sets the global variable back to None again.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="cern.pymad.abc.service.PyMadService.cleanup">
-<tt class="descname">cleanup</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/cern/pymad/abc/service.html#PyMadService.cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.service.PyMadService.cleanup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Can be overridden by subclass to do necessary cleanup steps</p>
+<dl class="function">
+<dt id="cern.pymad.tools.run.get_pms">
+<tt class="descclassname">cern.pymad.tools.run.</tt><tt class="descname">get_pms</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/cern/pymad/tools/run.html#get_pms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.tools.run.get_pms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the pymad-service singleton. If pymad is not initialized this raises an error</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="cern.pymad.abc.service.PyMadService.create_model">
-<tt class="descname">create_model</tt><big>(</big><em>modeldef</em><big>)</big><a class="reference internal" href="../_modules/cern/pymad/abc/service.html#PyMadService.create_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.service.PyMadService.create_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a model instance from a model definition.</p>
+<dl class="function">
+<dt id="cern.pymad.tools.run.init">
+<tt class="descclassname">cern.pymad.tools.run.</tt><tt class="descname">init</tt><big>(</big><em>mode='cpymad'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/cern/pymad/tools/run.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.tools.run.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the environment for using pymad in one of the possible modes. The first argument determines
+the mode (allowed values are &#8216;cpymad&#8217; and &#8216;jpymad&#8217;. If already a pymad service is running, then this function
+prints a warning and does nothing else.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mode</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Can be either &#8216;cpymad&#8217; or &#8216;pymad&#8217;. This option determines which pymad-service will be initialized.</li>
+<li><strong>kwargs</strong> &#8211; All the rest of the arguments are directly passed to the constructor of the created PyMadService</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the newly created pymad service if one was created.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cern.pymad.tools.run.is_initialized">
+<tt class="descclassname">cern.pymad.tools.run.</tt><tt class="descname">is_initialized</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/cern/pymad/tools/run.html#is_initialized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.tools.run.is_initialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns true, if a pymad service is initialized, false otherwise</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cern.pymad.tools.ls">
+<span id="module-ls"></span><h3>Module ls<a class="headerlink" href="#module-cern.pymad.tools.ls" title="Permalink to this headline">¶</a></h3>
+<p>Created on Tue Nov 16 19:21:25 2010</p>
+<p>&#64;author: kaifox</p>
+<dl class="function">
+<dt id="cern.pymad.tools.ls.ls_mdefs">
+<tt class="descclassname">cern.pymad.tools.ls.</tt><tt class="descname">ls_mdefs</tt><big>(</big><em>pms=None</em><big>)</big><a class="reference internal" href="../_modules/cern/pymad/tools/ls.html#ls_mdefs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.tools.ls.ls_mdefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>lists all the currently available model definitions from the given service</p>
 <p>Arguments:
-modeldef &#8211; the model definition from which to create the model as an</p>
-<blockquote>
-<div>object or just its name. If a name is given, then the modeldefinition 
-is first searched in the available model definitions.</div></blockquote>
+:param pms: the pymad service from which to retrieve the model definitions, 
+if this is None then the singleton is used</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="cern.pymad.abc.service.PyMadService.delete_model">
-<tt class="descname">delete_model</tt><big>(</big><em>model</em><big>)</big><a class="reference internal" href="../_modules/cern/pymad/abc/service.html#PyMadService.delete_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.service.PyMadService.delete_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>cleans up the given model and deletes a model from the available models</p>
+<dl class="function">
+<dt id="cern.pymad.tools.ls.ls_models">
+<tt class="descclassname">cern.pymad.tools.ls.</tt><tt class="descname">ls_models</tt><big>(</big><em>pms=None</em><big>)</big><a class="reference internal" href="../_modules/cern/pymad/tools/ls.html#ls_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.tools.ls.ls_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>lists all the currently created models from the given service
+Arguments:
+:param pms: the pymad service from which to retrieve the model definitions, if this is None then the singleton is used</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="cern.pymad.abc.service.PyMadService.mdefnames">
-<tt class="descname">mdefnames</tt><a class="reference internal" href="../_modules/cern/pymad/abc/service.html#PyMadService.mdefnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.service.PyMadService.mdefnames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the names of the available model definitions</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cern.pymad.abc.service.PyMadService.mdefs">
-<tt class="descname">mdefs</tt><a class="reference internal" href="../_modules/cern/pymad/abc/service.html#PyMadService.mdefs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.service.PyMadService.mdefs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the available model definitions as a list</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cern.pymad.abc.service.PyMadService.models">
-<tt class="descname">models</tt><a class="reference internal" href="../_modules/cern/pymad/abc/service.html#PyMadService.models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.service.PyMadService.models" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the instantiated models as a list</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-cern.pymad.abc.model">
-<span id="module-cern-pymad-abc-model"></span><h4>Module cern.pymad.abc.model<a class="headerlink" href="#module-cern.pymad.abc.model" title="Permalink to this headline">¶</a></h4>
-<p>Created on 15 Aug 2011</p>
-<p><em>Module author: Kajetan Fuchsberger &lt;<a class="reference external" href="mailto:Kajetan&#46;Fuchsberger&#37;&#52;&#48;cern&#46;ch">Kajetan<span>&#46;</span>Fuchsberger<span>&#64;</span>cern<span>&#46;</span>ch</a>&gt;</em></p>
-<dl class="class">
-<dt id="cern.pymad.abc.model.PyMadModel">
-<em class="property">class </em><tt class="descclassname">cern.pymad.abc.model.</tt><tt class="descname">PyMadModel</tt><a class="reference internal" href="../_modules/cern/pymad/abc/model.html#PyMadModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.model.PyMadModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>The abstract class for models</p>
-<dl class="attribute">
-<dt id="cern.pymad.abc.model.PyMadModel.mdef">
-<tt class="descname">mdef</tt><a class="reference internal" href="../_modules/cern/pymad/abc/model.html#PyMadModel.mdef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.model.PyMadModel.mdef" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns the model definition from which the model was created</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cern.pymad.abc.model.PyMadModel.name">
-<tt class="descname">name</tt><a class="reference internal" href="../_modules/cern/pymad/abc/model.html#PyMadModel.name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.model.PyMadModel.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the name of this model</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cern.pymad.abc.model.PyMadModel.set_optic">
-<tt class="descname">set_optic</tt><big>(</big><em>opticname</em><big>)</big><a class="reference internal" href="../_modules/cern/pymad/abc/model.html#PyMadModel.set_optic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.model.PyMadModel.set_optic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the actual optic with that of the given name. If the optic is not 
-contained in the definitions, then a ValueError is raised.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cern.pymad.abc.model.PyMadModel.twiss">
-<tt class="descname">twiss</tt><big>(</big><em>seqname=None, columns=[], elementpatterns=['.*'], file=None</em><big>)</big><a class="reference internal" href="../_modules/cern/pymad/abc/model.html#PyMadModel.twiss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.pymad.abc.model.PyMadModel.twiss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs a twiss on the model and returns a result containing the variables and the elements given.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
-</div>
-<div class="section" id="additional-tools">
-<h2>Additional tools<a class="headerlink" href="#additional-tools" title="Permalink to this headline">¶</a></h2>
-<p>A collection of tools which can be useful to the end user are documented here.</p>
-<div class="section" id="module-cern-pymad-tfs">
-<h3>Module cern.pymad.tfs<a class="headerlink" href="#module-cern-pymad-tfs" title="Permalink to this headline">¶</a></h3>
-<p>Simple function which loads a tfs file:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">cern</span> <span class="kn">import</span> <span class="n">pymad</span>
-<span class="n">table</span><span class="p">,</span><span class="n">summary</span><span class="o">=</span><span class="n">pymad</span><span class="o">.</span><span class="n">tfs</span><span class="p">(</span><span class="s">&#39;file.tfs&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>You can then access e.g. the horizontal beta in several equivalent ways:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">table</span><span class="o">.</span><span class="n">betx</span>
-<span class="n">table</span><span class="o">.</span><span class="n">BETX</span>
-<span class="n">table</span><span class="p">[</span><span class="s">&#39;betx&#39;</span><span class="p">]</span>
-<span class="n">table</span><span class="p">[</span><span class="s">&#39;BETX&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>All these four methods will return the same object. Naming scheme follows the convention
-from Mad-X.</p>
-<p>It is possible to get the list of available keys:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">table</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<span class="n">summary</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-</pre></div>
-</div>
 </div>
 </div>
 </div>
@@ -254,9 +255,6 @@ from Mad-X.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="../cpymad/index.html" title="CPyMad implementation"
-             >next</a> |</li>
         <li class="right" >
           <a href="../examples/demo_plot_beta.html" title="Plot Beta"
              >previous</a> |</li>

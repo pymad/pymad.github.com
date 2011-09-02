@@ -111,7 +111,16 @@ the command</p>
 </div>
 <div class="section" id="cpymad">
 <h2>CPyMad<a class="headerlink" href="#cpymad" title="Permalink to this headline">¶</a></h2>
-<p>First method, source script:</p>
+<dl class="docutils">
+<dt>First method, use installation script:</dt>
+<dd><p class="first">We provide an <a class="reference external" href="install.sh">installation script</a> which should do the full job for you. Download the script
+and run it. It will take a few minutes to finish. Upon successful completion, it will create an uninstall.sh
+script which you should keep somewhere. This script knows all the files you have installed,
+and will remove all files if you execute it (folders are not removed).</p>
+<p class="last">Dependencies: cmake, compilers for c/fortran, python 2.6 or 2.7</p>
+</dd>
+</dl>
+<p>Second method, source script:</p>
 <blockquote>
 <div><p>For CPymad on a 64 bit Linux machine with afs available, it is enough to source the script that we
 currently provide in</p>
@@ -119,7 +128,7 @@ currently provide in</p>
 <div>/afs/cern.ch/user/y/ylevinse/public/setupCPYMAD.sh</div></blockquote>
 <p>We hope to in the near future provide a tarball for Linux and OSX containing all needed files.</p>
 </div></blockquote>
-<p>Second method, manual installation:</p>
+<p>Third method, manual installation:</p>
 <blockquote>
 <div><ul>
 <li><p class="first">Download the Mad-X source from
@@ -127,7 +136,9 @@ currently provide in</p>
 and unpack it.</p>
 </li>
 <li><p class="first">Enter the folder madX and run the commands</p>
-<div class="highlight-sh"><div class="highlight"><pre>mkdir build; <span class="nb">cd </span>build; cmake -DMADX_STATIC<span class="o">=</span>OFF ../;make install
+<div class="highlight-sh"><div class="highlight"><pre>mkdir build; <span class="nb">cd </span>build
+cmake -DMADX_STATIC<span class="o">=</span>OFF -DBUILD_SHARED_LIBS<span class="o">=</span>ON -D ../
+make install
 </pre></div>
 </div>
 </li>

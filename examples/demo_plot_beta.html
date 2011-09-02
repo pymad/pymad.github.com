@@ -92,53 +92,58 @@
   <div class="section" id="plot-beta">
 <h1>Plot Beta<a class="headerlink" href="#plot-beta" title="Permalink to this headline">¶</a></h1>
 <p>The following example shows how to use pymad to plot the beta functions for the LHC for injection and collision optics:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span>
-<span class="kn">from</span> <span class="nn">cern</span> <span class="kn">import</span> <span class="n">pymad</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">pymad</span> <span class="kn">as</span> <span class="nn">pm</span>
 
 <span class="k">def</span> <span class="nf">plot_beta</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">postfix</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
     <span class="c"># Run twiss on the model, optionally give name of file</span>
     <span class="c"># where tfs table is stored</span>
-    <span class="n">result</span><span class="p">,</span> <span class="n">summary</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span><span class="n">seqname</span><span class="o">=</span><span class="s">&#39;lhcb1&#39;</span><span class="p">,</span>
-                                  <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;s&#39;</span><span class="p">,</span> <span class="s">&#39;betx&#39;</span><span class="p">,</span> <span class="s">&#39;bety&#39;</span><span class="p">],</span>
-                                  <span class="nb">file</span><span class="o">=</span><span class="s">&#39;lhcb1&#39;</span> <span class="o">+</span> <span class="n">postfix</span> <span class="o">+</span> <span class="s">&#39;.tfs&#39;</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">,</span> <span class="n">summary</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span><span class="n">seqname</span><span class="o">=</span><span class="s">&#39;lhcb1&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;s&#39;</span><span class="p">,</span> <span class="s">&#39;betx&#39;</span><span class="p">,</span> <span class="s">&#39;bety&#39;</span><span class="p">],</span> <span class="nb">file</span><span class="o">=</span><span class="s">&#39;lhcb1&#39;</span> <span class="o">+</span> <span class="n">postfix</span> <span class="o">+</span> <span class="s">&#39;.tfs&#39;</span><span class="p">)</span>
 
-    <span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
     <span class="c"># do something with the result (note, madx is still waiting!):</span>
-    <span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;dist. from IP1&#39;</span><span class="p">)</span>
-    <span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">r&#39;$\beta$&#39;</span><span class="p">)</span>
-    <span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">betx</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">r&#39;$\beta_x$&#39;</span><span class="p">)</span>
-    <span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">bety</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">r&#39;$\beta_y$&#39;</span><span class="p">)</span>
-    <span class="n">pyplot</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;beta&#39;</span> <span class="o">+</span> <span class="n">postfix</span> <span class="o">+</span> <span class="s">&#39;.eps&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;dist. from IP1&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">r&#39;$\beta$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">betx</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">r&#39;$\beta_x$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">bety</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">r&#39;$\beta_y$&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;beta&#39;</span> <span class="o">+</span> <span class="n">postfix</span> <span class="o">+</span> <span class="s">&#39;.eps&#39;</span><span class="p">)</span>
 
 
 <span class="c"># choose the mode</span>
 <span class="n">mode</span> <span class="o">=</span> <span class="s">&#39;jpymad&#39;</span>
-<span class="c">#mode = &#39;cpymad&#39;</span>
+<span class="c">#mode = &#39;jpymad&#39;</span>
 
-<span class="n">mdefname</span> <span class="o">=</span> <span class="s">&#39;lhc&#39;</span>
-<span class="n">opticname</span> <span class="o">=</span> <span class="s">&#39;injection&#39;</span>
+<span class="c"># some hacks for the moment:</span>
+<span class="c"># we have not the same model definitions in both implementations at the moment</span>
+<span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="s">&#39;jpymad&#39;</span><span class="p">:</span>
+    <span class="n">mdefname</span> <span class="o">=</span> <span class="s">&#39;LHC (LSA)&#39;</span>
+    <span class="n">opticname</span> <span class="o">=</span> <span class="s">&#39;A55C55A1000L500_0.00900_2011&#39;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">mdefname</span> <span class="o">=</span> <span class="s">&#39;???&#39;</span>
+    <span class="n">opticname</span> <span class="o">=</span> <span class="s">&#39;collision&#39;</span>
 
 <span class="c">#</span>
 <span class="c"># Here it starts</span>
 <span class="c">#</span>
-<span class="c"># create the PyMad Service</span>
-<span class="n">pms</span> <span class="o">=</span> <span class="n">pymad</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+<span class="c"># create the service</span>
+<span class="n">pms</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
 
 <span class="c"># print the name of all model definitions</span>
 <span class="k">print</span> <span class="n">pms</span><span class="o">.</span><span class="n">mdefnames</span>
 
 <span class="c"># alternatively use convenience function</span>
-<span class="c">#pymad.ls_mdefs()</span>
+<span class="c">#pm.ls_mdefs()</span>
 
 <span class="c"># get one model-definition</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">pms</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="n">mdefname</span><span class="p">)</span>
+<span class="n">mdef</span> <span class="o">=</span> <span class="n">pms</span><span class="o">.</span><span class="n">get_mdef</span><span class="p">(</span><span class="n">mdefname</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pms</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="n">mdef</span><span class="p">)</span>
 
 <span class="c"># alternatively: create the model by name and get the model definition afterwards:</span>
 <span class="c"># model = pms.create_model(mdefname)</span>
 <span class="c"># mdef = model.mdef</span>
 
 <span class="c"># list the available (running) models</span>
-<span class="n">pymad</span><span class="o">.</span><span class="n">ls_models</span><span class="p">()</span>
+<span class="n">pm</span><span class="o">.</span><span class="n">ls_models</span><span class="p">()</span>
 
 <span class="c"># print a list of available sequences:</span>
 <span class="k">print</span> <span class="n">mdef</span><span class="o">.</span><span class="n">seqnames</span>
@@ -155,7 +160,7 @@
 <span class="n">pms</span><span class="o">.</span><span class="n">delete_model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
 <span class="c"># and do a cleanup</span>
-<span class="n">pymad</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+<span class="n">pm</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

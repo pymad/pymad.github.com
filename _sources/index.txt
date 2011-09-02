@@ -25,7 +25,6 @@ Contents:
    installation/index
    examples/index
    api/index
-   cpymad/index
 
 Indices and tables
 ==================
