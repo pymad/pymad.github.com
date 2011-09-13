@@ -54,8 +54,14 @@
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">CPyMad implementation</a><ul>
-<li><a class="reference internal" href="#module-cern-madx">Module cern.madx</a></li>
-<li><a class="reference internal" href="#module-cern.cpymad.model">Module cern.cpymad.model</a></li>
+<li><a class="reference internal" href="#module-cern-madx">Module cern.madx</a><ul>
+<li><a class="reference internal" href="#automatic-documentation">Automatic documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-cern-cpymad-model">Module cern.cpymad.model</a><ul>
+<li><a class="reference internal" href="#id1">Automatic documentation</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -139,7 +145,8 @@ but it is recommended to set them for speed improvement. Currently the table is 
 parsed into a dictionary-like Python object. Each column in the table containing numerical data are in the form
 of numpy.array() objects, while strings are simple lists.</p>
 <p>Finally we choose another library to plot the result, in this case <tt class="xref py py-meth docutils literal"><span class="pre">matplotlib.pyplot.plot()</span></tt>.</p>
-<p>Test <tt class="xref py py-meth docutils literal"><span class="pre">os.system()</span></tt></p>
+<div class="section" id="automatic-documentation">
+<h3>Automatic documentation<a class="headerlink" href="#automatic-documentation" title="Permalink to this headline">¶</a></h3>
 <span class="target" id="module-cern.madx"></span><span class="target" id="module-madx"></span><p><em>Module author: Yngve Inntjore Levinsen &lt;Yngve.Inntjore.Levinsen.at.cern.ch&gt;</em></p>
 <p>Main module to interface with Mad-X library.</p>
 <dl class="class">
@@ -250,9 +257,21 @@ Some sanity checks are performed.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-cern.cpymad.model">
-<span id="module-cern-cpymad-model"></span><h2>Module cern.cpymad.model<a class="headerlink" href="#module-cern.cpymad.model" title="Permalink to this headline">¶</a></h2>
-<p>Cython implementation of the model api.
+</div>
+<div class="section" id="module-cern-cpymad-model">
+<h2>Module cern.cpymad.model<a class="headerlink" href="#module-cern-cpymad-model" title="Permalink to this headline">¶</a></h2>
+<p>This module is an implementation of the abstract class
+<a class="reference internal" href="../api/index.html#module-cern.pymad.abc.model" title="cern.pymad.abc.model"><tt class="xref py py-class docutils literal"><span class="pre">cern.pymad.abc.model</span></tt></a>, using <a class="reference internal" href="#module-cern.madx" title="cern.madx"><tt class="xref py py-class docutils literal"><span class="pre">cern.madx</span></tt></a> as the backend.</p>
+<p>A simple use-case:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">cern</span> <span class="kn">import</span> <span class="n">cpymad</span>
+<span class="n">m</span><span class="o">=</span><span class="n">cpymad</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="s">&#39;lhc&#39;</span><span class="p">)</span>
+<span class="n">tw</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">twiss</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">print</span> <span class="s">&quot;max/min beta x:&quot;</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="n">tw</span><span class="o">.</span><span class="n">betx</span><span class="p">),</span><span class="nb">min</span><span class="p">(</span><span class="n">tw</span><span class="o">.</span><span class="n">betx</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3>Automatic documentation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-cern.cpymad.model"></span><p>Cython implementation of the model api.
 See also <tt class="xref py py-class docutils literal"><span class="pre">cern.pymad.model</span></tt></p>
 <p><em>Module author: Yngve Inntjore Levinsen &lt;<a class="reference external" href="mailto:Yngve&#46;Inntjore&#46;Levinsen&#37;&#52;&#48;cern&#46;ch">Yngve<span>&#46;</span>Inntjore<span>&#46;</span>Levinsen<span>&#64;</span>cern<span>&#46;</span>ch</a>&gt;</em></p>
 <dl class="class">
@@ -408,6 +427,7 @@ implemented!</p>
 
 </dd></dl>
 
+</div>
 </div>
 </div>
 
