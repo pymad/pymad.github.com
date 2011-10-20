@@ -77,7 +77,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -331,6 +331,12 @@ beam.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="cern.cpymad.model.model.get_sequences">
+<tt class="descname">get_sequences</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.get_sequences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of loaded sequences.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="cern.cpymad.model.model.has_optics">
 <tt class="descname">has_optics</tt><big>(</big><em>optics</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.has_optics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.has_optics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if model has the optics.</p>
@@ -353,6 +359,34 @@ beam.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sequence</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Sequence name to be checked.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.cpymad.model.model.list_beams">
+<tt class="descname">list_beams</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.list_beams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of available beams</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.cpymad.model.model.list_optics">
+<tt class="descname">list_optics</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.list_optics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.list_optics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of available optics</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cern.cpymad.model.model.list_ranges">
+<tt class="descname">list_ranges</tt><big>(</big><em>sequence=None</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.list_ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of available ranges for the sequence.
+If sequence is not given, returns a dictionary structured as
+{sequence1:[range1,range2,...],sequence2:...}</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sequence</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; sequence name.</td>
 </tr>
 </tbody>
 </table>
@@ -391,7 +425,7 @@ beam.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>sequence</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Sequence, if empty, using default sequence.</li>
+<li><strong>sequence</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Sequence, if empty, using active or default sequence.</li>
 <li><strong>columns</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Columns in the twiss table, can also be list of strings</li>
 <li><strong>fname</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Optionally, give name of file for tfs table.</li>
 <li><strong>retdict</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Return dictionaries (default is an extended LookUpDict)</li>
@@ -456,7 +490,7 @@ implemented!</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Y.I. Levinsen, K. Fuchsberger (CERN) .
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

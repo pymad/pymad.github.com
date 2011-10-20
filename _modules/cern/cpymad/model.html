@@ -52,7 +52,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -202,9 +202,9 @@
     <span class="k">def</span> <span class="nf">list_sequences</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">madx</span><span class="o">.</span><span class="n">get_sequences</span><span class="p">()</span>
     
-    <span class="k">def</span> <span class="nf">list_optics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.list_optics"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.list_optics">[docs]</a>    <span class="k">def</span> <span class="nf">list_optics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;optics&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-    
+    </div>
 <div class="viewcode-block" id="model.twiss"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.twiss">[docs]</a>    <span class="k">def</span> <span class="nf">twiss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">sequence</span><span class="o">==</span><span class="s">&quot;&quot;</span><span class="p">:</span>
             <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dict</span><span class="p">[</span><span class="s">&#39;default&#39;</span><span class="p">][</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span>
@@ -268,7 +268,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Y.I. Levinsen, K. Fuchsberger (CERN) .
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>
