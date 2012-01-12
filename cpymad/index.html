@@ -77,7 +77,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -205,6 +205,7 @@ Some sanity checks are performed.</p>
 <dt id="cern.madx.madx.get_sequences">
 <tt class="descname">get_sequences</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.madx.madx.get_sequences" title="Permalink to this definition">¶</a></dt>
 <dd><p>madx.get_sequences(self)</p>
+<p>Returns the sequences currently in memory</p>
 </dd></dl>
 
 <dl class="method">
@@ -294,7 +295,7 @@ this has the advantage that you can run separate models which do not affect each
 </table>
 <dl class="method">
 <dt id="cern.cpymad.model.model.aperture">
-<tt class="descname">aperture</tt><big>(</big><em>sequence=''</em>, <em>madrange=''</em>, <em>columns='name</em>, <em>l</em>, <em>s</em>, <em>n1</em>, <em>aper_1</em>, <em>aper_2</em>, <em>aper_3</em>, <em>aper_4'</em>, <em>fname=''</em>, <em>retdict=False</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.aperture" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">aperture</tt><big>(</big><em>sequence=''</em>, <em>madrange=''</em>, <em>columns='name</em>, <em>l</em>, <em>s</em>, <em>n1</em>, <em>aper_1</em>, <em>aper_2</em>, <em>aper_3</em>, <em>aper_4'</em>, <em>fname=''</em>, <em>retdict=False</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.aperture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.aperture" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the aperture from the model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -315,14 +316,14 @@ this has the advantage that you can run separate models which do not affect each
 
 <dl class="method">
 <dt id="cern.cpymad.model.model.call">
-<tt class="descname">call</tt><big>(</big><em>filepath</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.call" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">call</tt><big>(</big><em>filepath</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.call" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call a file in Mad-X. Give either
 full file path or relative.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="cern.cpymad.model.model.get_beam">
-<tt class="descname">get_beam</tt><big>(</big><em>bname</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.get_beam" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_beam</tt><big>(</big><em>bname</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.get_beam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.get_beam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the beam definition in form
 of a dictionary.</p>
 <p>You can then change parameters in this dictionary
@@ -332,7 +333,7 @@ beam.</p>
 
 <dl class="method">
 <dt id="cern.cpymad.model.model.get_sequences">
-<tt class="descname">get_sequences</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.get_sequences" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_sequences</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.get_sequences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.get_sequences" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of loaded sequences.</p>
 </dd></dl>
 
@@ -366,7 +367,7 @@ beam.</p>
 
 <dl class="method">
 <dt id="cern.cpymad.model.model.list_beams">
-<tt class="descname">list_beams</tt><big>(</big><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.list_beams" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">list_beams</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.list_beams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.list_beams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of available beams</p>
 </dd></dl>
 
@@ -378,7 +379,7 @@ beam.</p>
 
 <dl class="method">
 <dt id="cern.cpymad.model.model.list_ranges">
-<tt class="descname">list_ranges</tt><big>(</big><em>sequence=None</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.list_ranges" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">list_ranges</tt><big>(</big><em>sequence=None</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.list_ranges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.list_ranges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of available ranges for the sequence.
 If sequence is not given, returns a dictionary structured as
 {sequence1:[range1,range2,...],sequence2:...}</p>
@@ -394,14 +395,14 @@ If sequence is not given, returns a dictionary structured as
 
 <dl class="method">
 <dt id="cern.cpymad.model.model.set_beam">
-<tt class="descname">set_beam</tt><big>(</big><em>beam_dict</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.set_beam" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_beam</tt><big>(</big><em>beam_dict</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.set_beam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.set_beam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the beam from a beam definition
 (dictionary)</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="cern.cpymad.model.model.set_optic">
-<tt class="descname">set_optic</tt><big>(</big><em>optic</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.set_optic" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_optic</tt><big>(</big><em>optic</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.set_optic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.set_optic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set new optics.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -418,7 +419,7 @@ If sequence is not given, returns a dictionary structured as
 
 <dl class="method">
 <dt id="cern.cpymad.model.model.survey">
-<tt class="descname">survey</tt><big>(</big><em>sequence=''</em>, <em>columns='name</em>, <em>l</em>, <em>s</em>, <em>angle</em>, <em>x</em>, <em>y</em>, <em>z</em>, <em>theta'</em>, <em>madrange=''</em>, <em>fname=''</em>, <em>retdict=False</em><big>)</big><a class="headerlink" href="#cern.cpymad.model.model.survey" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">survey</tt><big>(</big><em>sequence=''</em>, <em>columns='name</em>, <em>l</em>, <em>s</em>, <em>angle</em>, <em>x</em>, <em>y</em>, <em>z</em>, <em>theta'</em>, <em>madrange=''</em>, <em>fname=''</em>, <em>retdict=False</em><big>)</big><a class="reference internal" href="../_modules/cern/cpymad/model.html#model.survey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.cpymad.model.model.survey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run a survey on the model.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -490,7 +491,7 @@ implemented!</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Y.I. Levinsen, K. Fuchsberger (CERN) .
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

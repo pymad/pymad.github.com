@@ -11,6 +11,8 @@ tmp=temp_folder
 # Optionally, set a different install prefix:
 # Libraries will be installed in $prefix/lib,
 # binaries in $prefix/bin and so on
+# For system wide, manual installation we recommend
+# the prefix /usr/local.
 prefix=$HOME/.local/
 
 # Optionally, do not delete the temporary directory
