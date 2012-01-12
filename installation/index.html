@@ -60,6 +60,7 @@
 <li><a class="reference internal" href="#">Installation Instructions</a><ul>
 <li><a class="reference internal" href="#jpymad">JPyMad</a></li>
 <li><a class="reference internal" href="#cpymad">CPyMad</a></li>
+<li><a class="reference internal" href="#potential-problems">Potential problems</a></li>
 </ul>
 </li>
 </ul>
@@ -78,7 +79,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" size="18" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -137,7 +138,7 @@ and unpack it.</p>
 </li>
 <li><p class="first">Enter the folder madX and run the commands</p>
 <div class="highlight-sh"><div class="highlight"><pre>mkdir build; <span class="nb">cd </span>build
-cmake -DMADX_STATIC<span class="o">=</span>OFF -DBUILD_SHARED_LIBS<span class="o">=</span>ON -D ../
+cmake -DMADX_STATIC<span class="o">=</span>OFF -DBUILD_SHARED_LIBS<span class="o">=</span>ON ../
 make install
 </pre></div>
 </div>
@@ -154,6 +155,26 @@ and unpack it</p>
 </div></blockquote>
 <p>If you download JMad after following any of the methods described above for CPyMad,
 you will immediately have JPyMad available as well.</p>
+</div>
+<div class="section" id="potential-problems">
+<h2>Potential problems<a class="headerlink" href="#potential-problems" title="Permalink to this headline">¶</a></h2>
+<p>In the following we will try to keep a list of the various issues users have reported during installation.</p>
+<blockquote>
+<div><ul>
+<li><p class="first">libmadx.so not found:</p>
+<div class="highlight-python"><pre>from cern.madx import madx
+ImportError: libmadx.so: cannot open shared object file: No such file or directory</pre>
+</div>
+<p>Solution:
+Though we try to set the runtime path during compilation, it doesn&#8217;t always work. Please set
+the LD_LIBRARY_PATH in your environment. Example, if libmadx.so is installed in
+$HOME/.local/lib, and you use bash, add to $HOME/.bashrc:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$LD_LIBRARY_PATH</span>:<span class="nv">$HOME</span>/.local/lib/
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
 </div>
 </div>
 
@@ -185,7 +206,7 @@ you will immediately have JPyMad available as well.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Y.I. Levinsen, K. Fuchsberger (CERN) .
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>
