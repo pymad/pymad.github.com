@@ -173,7 +173,18 @@ $HOME/.local/lib, and you use bash, add to $HOME/.bashrc:</p>
 </pre></div>
 </div>
 </li>
+<li><p class="first">Cython.Distutils not found:</p>
+<div class="highlight-sh"><div class="highlight"><pre>Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+ File <span class="s2">&quot;setup.py&quot;</span>, line 22, in &lt;module&gt;
+  from Cython.Distutils import build_ext
+ImportError: No module named Cython.Distutils
+</pre></div>
+</div>
+</li>
 </ul>
+<blockquote>
+<div>Solution:
+In order to get cpymad, you need Cython installed on your system. If you cannot obtain that, use jpymad instead.</div></blockquote>
 </div></blockquote>
 </div>
 </div>
