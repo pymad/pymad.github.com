@@ -48,11 +48,12 @@ fi
 
 cd $tmp/madX
 mkdir build; cd build
-cmake -DMADX_STATIC=OFF \
-      -DBUILD_SHARED_LIBS=ON \
-      -DCMAKE_INSTALL_PREFIX=$prefix \
-      -DCMAKE_BUILD_TYPE=Release \
-      ..
+cmake_opt="-DMADX_STATIC=OFF
+           -DBUILD_SHARED_LIBS=ON
+           -DCMAKE_INSTALL_PREFIX=$prefix
+           -DCMAKE_BUILD_TYPE=Release"
+[[ "`uname -a`" =~ "arwin" ]] && cmake_opt="$cmake_opt -DMADX_BUNDLE=OFF"
+cmake $cmake_opt ..
 make install
 
 
