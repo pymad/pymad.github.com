@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>cern.cpymad.model &mdash; PyMad v0.1.0 documentation</title>
+    <title>cern.cpymad.model &mdash; PyMad v0.2.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.1.0',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="PyMad v0.1.0 documentation" href="../../../index.html" />
+    <link rel="top" title="PyMad v0.2.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body> 
@@ -116,7 +116,7 @@
 <span class="sd">    :param string optics: Name of optics to load</span>
 <span class="sd">    :param string histfile: Name of file which will contain all Mad-X commands called.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">sequence</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">optics</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">histfile</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">sequence</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">optics</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">histfile</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">recursive_history</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         
         <span class="k">if</span> <span class="n">model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cern</span><span class="o">.</span><span class="n">cpymad</span><span class="o">.</span><span class="n">modelList</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;The model you asked for does not exist in the database&quot;</span><span class="p">)</span>
@@ -140,7 +140,7 @@
         <span class="c">#if self._db==None:</span>
             <span class="c">#raise ValueError(&quot;It is not possible to find database directory for this model&quot;)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mprocess</span><span class="o">=</span><span class="n">_modelProcess</span><span class="p">(</span><span class="n">_child_pipe_send</span><span class="p">,</span><span class="n">_child_pipe_recv</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">histfile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mprocess</span><span class="o">=</span><span class="n">_modelProcess</span><span class="p">(</span><span class="n">_child_pipe_send</span><span class="p">,</span><span class="n">_child_pipe_recv</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">histfile</span><span class="p">,</span><span class="n">recursive_history</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_mprocess</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         
@@ -376,7 +376,19 @@
         <span class="kn">from</span> <span class="nn">cern.pymad.domain</span> <span class="kn">import</span> <span class="n">TfsTable</span><span class="p">,</span> <span class="n">TfsSummary</span>
         <span class="k">if</span> <span class="n">sequence</span><span class="o">==</span><span class="s">&#39;&#39;</span><span class="p">:</span>
             <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;default-sequence&#39;</span><span class="p">]</span>
-        <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;sequence&#39;</span><span class="p">:</span><span class="n">sequence</span><span class="p">,</span><span class="s">&#39;columns&#39;</span><span class="p">:</span><span class="n">columns</span><span class="p">,</span><span class="s">&#39;pattern&#39;</span><span class="p">:</span><span class="n">pattern</span><span class="p">,</span><span class="s">&#39;madrange&#39;</span><span class="p">:</span><span class="n">madrange</span><span class="p">,</span><span class="s">&#39;fname&#39;</span><span class="p">:</span><span class="n">fname</span><span class="p">}</span>
+        <span class="n">seqdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">sequence</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">madrange</span><span class="o">==</span><span class="s">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">rangedict</span><span class="o">=</span><span class="n">seqdict</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">][</span><span class="n">seqdict</span><span class="p">[</span><span class="s">&#39;default-range&#39;</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rangedict</span><span class="o">=</span><span class="n">seqdict</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">][</span><span class="n">madrange</span><span class="p">]</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;sequence&#39;</span><span class="p">:</span><span class="n">sequence</span><span class="p">,</span><span class="s">&#39;columns&#39;</span><span class="p">:</span><span class="n">columns</span><span class="p">,</span><span class="s">&#39;pattern&#39;</span><span class="p">:</span><span class="n">pattern</span><span class="p">,</span><span class="s">&#39;fname&#39;</span><span class="p">:</span><span class="n">fname</span><span class="p">}</span>
+        <span class="n">args</span><span class="p">[</span><span class="s">&#39;madrange&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">rangedict</span><span class="p">[</span><span class="s">&quot;madx-range&quot;</span><span class="p">][</span><span class="s">&quot;first&quot;</span><span class="p">],</span><span class="n">rangedict</span><span class="p">[</span><span class="s">&quot;madx-range&quot;</span><span class="p">][</span><span class="s">&quot;last&quot;</span><span class="p">]]</span>
+        <span class="n">args</span><span class="p">[</span><span class="s">&#39;twiss-init&#39;</span><span class="p">]</span><span class="o">=</span><span class="bp">None</span>
+        <span class="k">if</span> <span class="s">&#39;twiss-initial-conditions&#39;</span> <span class="ow">in</span> <span class="n">rangedict</span><span class="p">:</span>
+            <span class="n">args</span><span class="p">[</span><span class="s">&#39;twiss-init&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">{}</span>
+            <span class="k">for</span> <span class="n">condition</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">rangedict</span><span class="p">[</span><span class="s">&#39;twiss-initial-conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">args</span><span class="p">[</span><span class="s">&#39;twiss-init&#39;</span><span class="p">][</span><span class="n">condition</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
         <span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sendrecv</span><span class="p">((</span><span class="s">&#39;twiss&#39;</span><span class="p">,</span><span class="n">args</span><span class="p">))</span>
         <span class="c"># we say that when the &quot;full&quot; range has been selected, </span>
         <span class="c"># we can set this to true. Needed for e.g. aperture calls</span>
@@ -532,15 +544,16 @@
     <span class="k">return</span> <span class="n">stream</span>
     
 <span class="k">class</span> <span class="nc">_modelProcess</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">receiver</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">history</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">receiver</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">history</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">recursive_history</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="o">=</span><span class="n">sender</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">receiver</span><span class="o">=</span><span class="n">receiver</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">=</span><span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">=</span><span class="n">history</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recursive_history</span><span class="o">=</span><span class="n">recursive_history</span>
         <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> 
     
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">_madx</span><span class="o">=</span><span class="n">madx</span><span class="p">(</span><span class="n">histfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">)</span>
+        <span class="n">_madx</span><span class="o">=</span><span class="n">madx</span><span class="p">(</span><span class="n">histfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">,</span><span class="n">recursive_history</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recursive_history</span><span class="p">)</span>
         <span class="n">_madx</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="n">_madx</span><span class="o">.</span><span class="n">append_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">USE_COUCH</span><span class="p">:</span>
@@ -570,7 +583,8 @@
                     <span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="n">_madx</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;sequence&#39;</span><span class="p">],</span>
                                      <span class="n">columns</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;columns&#39;</span><span class="p">],</span>
                                      <span class="n">pattern</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;pattern&#39;</span><span class="p">],</span>
-                                     <span class="n">fname</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;fname&#39;</span><span class="p">]</span>
+                                     <span class="n">fname</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;fname&#39;</span><span class="p">],</span>
+                                     <span class="n">twiss_init</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;twiss-init&#39;</span><span class="p">]</span>
                                      <span class="p">,</span><span class="n">retdict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="p">))</span>
                 <span class="k">elif</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;survey&#39;</span><span class="p">:</span>
