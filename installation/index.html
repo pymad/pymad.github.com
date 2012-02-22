@@ -172,6 +172,9 @@ $HOME/.local/lib, and you use bash, add to $HOME/.bashrc:</p>
 <div class="highlight-sh"><div class="highlight"><pre><span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$LD_LIBRARY_PATH</span>:<span class="nv">$HOME</span>/.local/lib/
 </pre></div>
 </div>
+<p>Please note, on OSX you might need to use the variable DYLD_LIBRARY_PATH instead of
+LD_LIBRARY_PATH. The authors are not very familiar with OSX, but know of at least one
+occurence where that was the problem.</p>
 </li>
 <li><p class="first">Cython.Distutils not found:</p>
 <div class="highlight-sh"><div class="highlight"><pre>Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
