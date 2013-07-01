@@ -73,15 +73,15 @@
   <h1>Source code for cern.cpymad.model</h1><div class="highlight"><pre>
 <span class="c">#-------------------------------------------------------------------------------</span>
 <span class="c"># This file is part of PyMad.</span>
-<span class="c"># </span>
+<span class="c">#</span>
 <span class="c"># Copyright (c) 2011, CERN. All rights reserved.</span>
-<span class="c"># </span>
+<span class="c">#</span>
 <span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
 <span class="c"># you may not use this file except in compliance with the License.</span>
 <span class="c"># You may obtain a copy of the License at</span>
-<span class="c"># </span>
+<span class="c">#</span>
 <span class="c"># 	http://www.apache.org/licenses/LICENSE-2.0</span>
-<span class="c"># </span>
+<span class="c">#</span>
 <span class="c"># Unless required by applicable law or agreed to in writing, software</span>
 <span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
 <span class="c"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
@@ -111,21 +111,23 @@
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    model class implementation. the model spawns a madx instance in a separate process.</span>
 <span class="sd">    this has the advantage that you can run separate models which do not affect each other.</span>
-<span class="sd">     </span>
+
 <span class="sd">    :param string model: Name of model to load.</span>
-<span class="sd">    :param string optics: Name of optics to load</span>
+<span class="sd">    :param string optics: Name of optics to load, string or list of strings.</span>
 <span class="sd">    :param string histfile: Name of file which will contain all Mad-X commands called.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">sequence</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">optics</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">histfile</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">recursive_history</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        
+
         <span class="k">if</span> <span class="n">model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cern</span><span class="o">.</span><span class="n">cpymad</span><span class="o">.</span><span class="n">modelList</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;The model you asked for does not exist in the database&quot;</span><span class="p">)</span>
         <span class="c"># name of model:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">=</span><span class="n">model</span>
+        <span class="c"># path where the model file is located</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">_get_filename</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
         <span class="c"># loading the dictionary...</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="o">=</span><span class="n">_get_mdef</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-        
-        
+
+
         <span class="c"># Defining two pipes which are used for communicating...</span>
         <span class="n">_child_pipe_recv</span><span class="p">,</span><span class="n">_parent_send</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="n">_parent_recv</span><span class="p">,</span><span class="n">_child_pipe_send</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pipe</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
@@ -139,72 +141,105 @@
                     <span class="k">break</span>
         <span class="c">#if self._db==None:</span>
             <span class="c">#raise ValueError(&quot;It is not possible to find database directory for this model&quot;)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_mprocess</span><span class="o">=</span><span class="n">_modelProcess</span><span class="p">(</span><span class="n">_child_pipe_send</span><span class="p">,</span><span class="n">_child_pipe_recv</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">histfile</span><span class="p">,</span><span class="n">recursive_history</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_mprocess</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        
+
         <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mprocess</span><span class="o">.</span><span class="n">terminate</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;optic&#39;</span><span class="p">:</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="s">&#39;sequence&#39;</span><span class="p">:</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="s">&#39;range&#39;</span><span class="p">:</span><span class="s">&#39;&#39;</span><span class="p">}</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_initial</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span><span class="n">optics</span><span class="p">)</span>
-    
+
     <span class="c"># API stuff:</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
-    
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">mdef</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    
-    <span class="k">def</span> <span class="nf">set_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">sequence</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">sequence</span>
+
+
+<div class="viewcode-block" id="model.set_sequence"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.set_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">set_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">madrange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Set a new active sequence...</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sequence</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;default-sequence&#39;</span><span class="p">]</span>
+            <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">sequence</span>
+            <span class="k">if</span> <span class="n">madrange</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_range</span><span class="p">(</span><span class="n">madrange</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&quot;WARNING: You tried to activate a non-existing sequence&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;default-sequence&#39;</span><span class="p">]</span>
-        
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">sequence</span><span class="p">][</span><span class="s">&#39;default-range&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;You tried to activate a non-existing sequence&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="model.set_range"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.set_range">[docs]</a>    <span class="k">def</span> <span class="nf">set_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">madrange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Sets the active range to madrange. Must be defined in the</span>
+<span class="sd">        currently active sequence...</span>
+<span class="sd">        If madrange is empty, sets the range to default-range unless</span>
+<span class="sd">        another range is already set.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">seqdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">madrange</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">madrange</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seqdict</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> is not a valid range name, available ranges: &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">madrange</span><span class="p">,</span><span class="s">&quot;&#39; &#39;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;range&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">madrange</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;range&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;range&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">seqdict</span><span class="p">[</span><span class="s">&#39;default-range&#39;</span><span class="p">]</span>
+</div>
     <span class="k">def</span> <span class="nf">_setup_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="p">,</span><span class="n">optics</span><span class="p">):</span>
-        
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initial setup of the model</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">for</span> <span class="n">ifile</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;init-files&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">(</span><span class="s">&quot;Calling file: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ifile</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="n">ifile</span><span class="p">)</span>
-        
-        <span class="c"># essentially just calls the beam command for all sequences..</span>
+
+        <span class="c"># initialize all sequences..</span>
         <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_sequence</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_sequence</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
         <span class="c"># then we set the default one..</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
-            
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_optic</span><span class="p">(</span><span class="n">optics</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">optics</span><span class="p">)</span><span class="o">==</span><span class="nb">type</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_optic</span><span class="p">(</span><span class="n">optics</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">optics</span><span class="p">)</span><span class="o">==</span><span class="nb">type</span><span class="p">([]):</span>
+            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">optics</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_optic</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
         <span class="c"># To keep track of whether or not certain things are already called..</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_apercalled</span><span class="o">=</span><span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_twisscalled</span><span class="o">=</span><span class="p">{}</span>
         <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sequences</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_apercalled</span><span class="p">[</span><span class="n">seq</span><span class="p">]</span><span class="o">=</span><span class="bp">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_twisscalled</span><span class="p">[</span><span class="n">seq</span><span class="p">]</span><span class="o">=</span><span class="bp">False</span>
-        
-    <span class="k">def</span> <span class="nf">_set_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_init_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initialize sequence</span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">bname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">sequence</span><span class="p">][</span><span class="s">&#39;beam&#39;</span><span class="p">]</span>
         <span class="n">bdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_beam</span><span class="p">(</span><span class="n">bname</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_beam</span><span class="p">(</span><span class="n">bdict</span><span class="p">)</span>
-    
+
 <div class="viewcode-block" id="model.get_beam"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.get_beam">[docs]</a>    <span class="k">def</span> <span class="nf">get_beam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">bname</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Returns the beam definition in form</span>
 <span class="sd">         of a dictionary.</span>
-<span class="sd">         </span>
+
 <span class="sd">         You can then change parameters in this dictionary</span>
 <span class="sd">         as you see fit, and use set_beam() to activate that</span>
 <span class="sd">         beam.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;beams&#39;</span><span class="p">][</span><span class="n">bname</span><span class="p">]</span>
-        </div>
+</div>
 <div class="viewcode-block" id="model.set_beam"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.set_beam">[docs]</a>    <span class="k">def</span> <span class="nf">set_beam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">beam_dict</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Set the beam from a beam definition</span>
@@ -216,18 +251,18 @@
         <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&quot;Beam command: &quot;</span><span class="o">+</span><span class="n">bcmd</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="n">bcmd</span><span class="p">)</span>
-        
-        </div>
+
+</div>
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="s">&#39;delete_model&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_mprocess</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span> <span class="k">pass</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="k">pass</span>
-    
+
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
-    
+
     <span class="k">def</span> <span class="nf">_get_file_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fdict</span><span class="p">):</span>
         <span class="k">if</span> <span class="s">&#39;location&#39;</span> <span class="ow">in</span> <span class="n">fdict</span><span class="p">:</span>
             <span class="n">loc</span><span class="o">=</span><span class="n">fdict</span><span class="p">[</span><span class="s">&#39;location&#39;</span><span class="p">]</span>
@@ -237,24 +272,24 @@
             <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&quot;path-offsets&quot;</span><span class="p">][</span><span class="s">&#39;resource-offset&#39;</span><span class="p">]</span><span class="o">+</span><span class="s">&#39;/&#39;</span>
         <span class="k">elif</span> <span class="n">loc</span><span class="o">==</span><span class="s">&#39;REPOSITORY&#39;</span><span class="p">:</span>
             <span class="n">fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&quot;path-offsets&quot;</span><span class="p">][</span><span class="s">&#39;repository-offset&#39;</span><span class="p">]</span><span class="o">+</span><span class="s">&#39;/&#39;</span>
-        
+
         <span class="k">if</span> <span class="n">USE_COUCH</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Sorry, couch not implemented to use this feature&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">loc</span><span class="o">==</span><span class="s">&#39;RESOURCE&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;/_models/resdata/&#39;</span><span class="o">+</span><span class="n">fname</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="o">+</span><span class="s">&#39;/resdata/&#39;</span><span class="o">+</span><span class="n">fname</span>
             <span class="k">elif</span> <span class="n">loc</span><span class="o">==</span><span class="s">&#39;REPOSITORY&#39;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">+</span><span class="n">fname</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;/_models/repdata/&#39;</span><span class="o">+</span><span class="n">fname</span>
-    
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="o">+</span><span class="s">&#39;/repdata/&#39;</span><span class="o">+</span><span class="n">fname</span>
+
     <span class="k">def</span> <span class="nf">_call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fdict</span><span class="p">):</span>
-            
+
         <span class="n">fpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_file_path</span><span class="p">(</span><span class="n">fdict</span><span class="p">)</span><span class="o">+</span><span class="n">fdict</span><span class="p">[</span><span class="s">&#39;path&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
-    
-    
+
+
 <div class="viewcode-block" id="model.call"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filepath</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Call a file in Mad-X. Give either</span>
@@ -262,82 +297,82 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;You tried to call a file that doesn&#39;t exist: &quot;</span><span class="o">+</span><span class="n">filepath</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&quot;Calling file: &quot;</span><span class="o">+</span><span class="n">filepath</span><span class="p">)</span>
-        
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sendrecv</span><span class="p">((</span><span class="s">&#39;call&#39;</span><span class="p">,</span><span class="n">filepath</span><span class="p">))</span>
-    </div>
+</div>
 <div class="viewcode-block" id="model.has_sequence"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.has_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">has_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Check if model has the sequence.</span>
-<span class="sd">         </span>
+
 <span class="sd">         :param string sequence: Sequence name to be checked.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sequences</span><span class="p">()</span>
-    </div>
+</div>
 <div class="viewcode-block" id="model.has_optics"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.has_optics">[docs]</a>    <span class="k">def</span> <span class="nf">has_optics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">optics</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Check if model has the optics.</span>
-<span class="sd">         </span>
+
 <span class="sd">         :param string optics: Optics name to be checked.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">optics</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;optics&#39;</span><span class="p">]</span>
-    </div>
+</div>
 <div class="viewcode-block" id="model.set_optic"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.set_optic">[docs]</a>    <span class="k">def</span> <span class="nf">set_optic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">optic</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Set new optics.</span>
-<span class="sd">         </span>
+
 <span class="sd">         :param string optics: Optics name.</span>
-<span class="sd">         </span>
+
 <span class="sd">         :raises KeyError: In case you try to set an optics not available in model.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        
+
         <span class="k">if</span> <span class="n">optic</span><span class="o">==</span><span class="s">&#39;&#39;</span><span class="p">:</span>
             <span class="n">optic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;default-optic&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;optic&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">optic</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&quot;INFO: Optics already initialized&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="mi">0</span>
-        
+
         <span class="c"># optics dictionary..</span>
         <span class="n">odict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;optics&#39;</span><span class="p">][</span><span class="n">optic</span><span class="p">]</span>
-        
+
         <span class="k">for</span> <span class="n">strfile</span> <span class="ow">in</span> <span class="n">odict</span><span class="p">[</span><span class="s">&#39;init-files&#39;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_call</span><span class="p">(</span><span class="n">strfile</span><span class="p">)</span>
-        
+
         <span class="c"># knobs dictionary.. we don&#39;t have that yet..</span>
         <span class="c">#for f in odict[&#39;knobs&#39;]:</span>
             <span class="c">#if odict[&#39;knobs&#39;][f]:</span>
                 <span class="c">#self.set_knob(f,1.0)</span>
             <span class="c">#else:</span>
                 <span class="c">#self.set_knob(f,0.0)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;optic&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">optic</span>
-    </div>
+</div>
     <span class="k">def</span> <span class="nf">set_knob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">knob</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="n">kdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;knobs&#39;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">kdict</span><span class="p">[</span><span class="n">knob</span><span class="p">]:</span>
             <span class="n">val</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">kdict</span><span class="p">[</span><span class="n">knob</span><span class="p">][</span><span class="n">e</span><span class="p">]</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">(</span><span class="n">e</span><span class="o">+</span><span class="s">&quot;=&quot;</span><span class="o">+</span><span class="n">val</span><span class="p">)</span>
-    
+
 <div class="viewcode-block" id="model.get_sequences"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.get_sequences">[docs]</a>    <span class="k">def</span> <span class="nf">get_sequences</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Returns a list of loaded sequences.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sendrecv</span><span class="p">(</span><span class="s">&#39;get_sequences&#39;</span><span class="p">)</span>
-    </div>
+</div>
 <div class="viewcode-block" id="model.list_optics"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.list_optics">[docs]</a>    <span class="k">def</span> <span class="nf">list_optics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Returns a list of available optics</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;optics&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-    </div>
+</div>
 <div class="viewcode-block" id="model.list_ranges"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.list_ranges">[docs]</a>    <span class="k">def</span> <span class="nf">list_ranges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Returns a list of available ranges for the sequence.</span>
 <span class="sd">         If sequence is not given, returns a dictionary structured as</span>
 <span class="sd">         {sequence1:[range1,range2,...],sequence2:...}</span>
-<span class="sd">         </span>
+
 <span class="sd">         :param string sequence: sequence name.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">sequence</span><span class="o">==</span><span class="bp">None</span><span class="p">:</span>
@@ -345,117 +380,141 @@
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sequences</span><span class="p">():</span>
                 <span class="n">ret</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">s</span><span class="p">][</span><span class="s">&#39;ranges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">ret</span>
-        
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">sequence</span><span class="p">][</span><span class="s">&#39;ranges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-    </div>
+</div>
 <div class="viewcode-block" id="model.list_beams"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.list_beams">[docs]</a>    <span class="k">def</span> <span class="nf">list_beams</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Returns a list of available beams</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;beams&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-    </div>
+</div>
+    <span class="k">def</span> <span class="nf">_get_twiss_initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">madrange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the dictionary for the twiss initial conditions.</span>
+<span class="sd">        If name is not defined, using default-twiss</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">rangedict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_range_dict</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="n">sequence</span><span class="p">,</span><span class="n">madrange</span><span class="o">=</span><span class="n">madrange</span><span class="p">)</span>
+        <span class="n">madrange</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;range&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rangedict</span><span class="p">[</span><span class="s">&#39;twiss-initial-conditions&#39;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;twiss initial conditions with name &#39;</span><span class="o">+</span><span class="n">name</span><span class="o">+</span><span class="s">&#39; not found in range &#39;</span><span class="o">+</span><span class="n">madrange</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">rangedict</span><span class="p">[</span><span class="s">&#39;twiss-initial-conditions&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">rangedict</span><span class="p">[</span><span class="s">&#39;twiss-initial-conditions&#39;</span><span class="p">][</span><span class="n">rangedict</span><span class="p">[</span><span class="s">&#39;default-twiss&#39;</span><span class="p">]]</span>
+
+
 <div class="viewcode-block" id="model.twiss"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.twiss">[docs]</a>    <span class="k">def</span> <span class="nf">twiss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">sequence</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
               <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">,</span><span class="s">&#39;s&#39;</span><span class="p">,</span><span class="s">&#39;betx&#39;</span><span class="p">,</span><span class="s">&#39;bety&#39;</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">,</span><span class="s">&#39;dx&#39;</span><span class="p">,</span><span class="s">&#39;dy&#39;</span><span class="p">,</span><span class="s">&#39;px&#39;</span><span class="p">,</span><span class="s">&#39;py&#39;</span><span class="p">,</span><span class="s">&#39;mux&#39;</span><span class="p">,</span><span class="s">&#39;muy&#39;</span><span class="p">,</span><span class="s">&#39;l&#39;</span><span class="p">,</span><span class="s">&#39;k1l&#39;</span><span class="p">,</span><span class="s">&#39;angle&#39;</span><span class="p">,</span><span class="s">&#39;k2l&#39;</span><span class="p">],</span>
               <span class="n">pattern</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;full&#39;</span><span class="p">],</span>
               <span class="n">madrange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
               <span class="n">fname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
-              <span class="n">retdict</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+              <span class="n">retdict</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">use</span><span class="o">=</span><span class="bp">True</span>
+              <span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Run a TWISS on the model.</span>
-<span class="sd">         </span>
+
 <span class="sd">         Warning for ranges: Currently TWISS with initial conditions is NOT</span>
 <span class="sd">         implemented!</span>
-<span class="sd">         </span>
-<span class="sd">         :param string sequence: Sequence, if empty, using default sequence.</span>
+
+<span class="sd">         :param string sequence: Sequence, if empty, using active sequence.</span>
 <span class="sd">         :param string columns: Columns in the twiss table, can also be list of strings</span>
 <span class="sd">         :param string madrange: Optional, give name of a range defined for the model.</span>
 <span class="sd">         :param string fname: Optionally, give name of file for tfs table.</span>
-<span class="sd">         :param bool retdict: Return dictionaries (default is an extended LookUpDict)</span>
+<span class="sd">         :param bool retdict: Return dictionaries (default is an extended LookUpDict).</span>
+<span class="sd">         :param bool use: Call use before twiss.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="kn">from</span> <span class="nn">cern.pymad.domain</span> <span class="kn">import</span> <span class="n">TfsTable</span><span class="p">,</span> <span class="n">TfsSummary</span>
-        <span class="k">if</span> <span class="n">sequence</span><span class="o">==</span><span class="s">&#39;&#39;</span><span class="p">:</span>
-            <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;default-sequence&#39;</span><span class="p">]</span>
-        <span class="n">seqdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">sequence</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">madrange</span><span class="o">==</span><span class="s">&#39;&#39;</span><span class="p">:</span>
-            <span class="n">rangedict</span><span class="o">=</span><span class="n">seqdict</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">][</span><span class="n">seqdict</span><span class="p">[</span><span class="s">&#39;default-range&#39;</span><span class="p">]]</span>
+
+        <span class="c"># set sequence/range...</span>
+        <span class="k">if</span> <span class="n">madrange</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span><span class="n">madrange</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">rangedict</span><span class="o">=</span><span class="n">seqdict</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">][</span><span class="n">madrange</span><span class="p">]</span>
-        <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;sequence&#39;</span><span class="p">:</span><span class="n">sequence</span><span class="p">,</span><span class="s">&#39;columns&#39;</span><span class="p">:</span><span class="n">columns</span><span class="p">,</span><span class="s">&#39;pattern&#39;</span><span class="p">:</span><span class="n">pattern</span><span class="p">,</span><span class="s">&#39;fname&#39;</span><span class="p">:</span><span class="n">fname</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span>
+        <span class="n">_madrange</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;range&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apercalled</span><span class="p">[</span><span class="n">sequence</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;BUG in Mad-X: Cannot call twiss after aperture..&quot;</span><span class="p">)</span>
+
+        <span class="n">seqdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">sequence</span><span class="p">]</span>
+        <span class="n">rangedict</span><span class="o">=</span><span class="n">seqdict</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">][</span><span class="n">_madrange</span><span class="p">]</span>
+
+        <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;sequence&#39;</span><span class="p">:</span><span class="n">sequence</span><span class="p">,</span><span class="s">&#39;columns&#39;</span><span class="p">:</span><span class="n">columns</span><span class="p">,</span><span class="s">&#39;pattern&#39;</span><span class="p">:</span><span class="n">pattern</span><span class="p">,</span><span class="s">&#39;fname&#39;</span><span class="p">:</span><span class="n">fname</span><span class="p">,</span><span class="s">&#39;use&#39;</span><span class="p">:</span><span class="n">use</span><span class="p">}</span>
         <span class="n">args</span><span class="p">[</span><span class="s">&#39;madrange&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">rangedict</span><span class="p">[</span><span class="s">&quot;madx-range&quot;</span><span class="p">][</span><span class="s">&quot;first&quot;</span><span class="p">],</span><span class="n">rangedict</span><span class="p">[</span><span class="s">&quot;madx-range&quot;</span><span class="p">][</span><span class="s">&quot;last&quot;</span><span class="p">]]</span>
         <span class="n">args</span><span class="p">[</span><span class="s">&#39;twiss-init&#39;</span><span class="p">]</span><span class="o">=</span><span class="bp">None</span>
         <span class="k">if</span> <span class="s">&#39;twiss-initial-conditions&#39;</span> <span class="ow">in</span> <span class="n">rangedict</span><span class="p">:</span>
             <span class="n">args</span><span class="p">[</span><span class="s">&#39;twiss-init&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">{}</span>
-            <span class="k">for</span> <span class="n">condition</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">rangedict</span><span class="p">[</span><span class="s">&#39;twiss-initial-conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">condition</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_twiss_initial</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span><span class="n">_madrange</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
                     <span class="n">args</span><span class="p">[</span><span class="s">&#39;twiss-init&#39;</span><span class="p">][</span><span class="n">condition</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
         <span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sendrecv</span><span class="p">((</span><span class="s">&#39;twiss&#39;</span><span class="p">,</span><span class="n">args</span><span class="p">))</span>
-        <span class="c"># we say that when the &quot;full&quot; range has been selected, </span>
+        <span class="c"># we say that when the &quot;full&quot; range has been selected,</span>
         <span class="c"># we can set this to true. Needed for e.g. aperture calls</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">madrange</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_twisscalled</span><span class="p">[</span><span class="n">sequence</span><span class="p">]</span><span class="o">=</span><span class="bp">True</span>
         <span class="k">if</span> <span class="n">retdict</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">t</span><span class="p">,</span><span class="n">s</span>
         <span class="k">return</span> <span class="n">TfsTable</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="n">TfsSummary</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-    </div>
+</div>
 <div class="viewcode-block" id="model.survey"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.survey">[docs]</a>    <span class="k">def</span> <span class="nf">survey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                <span class="n">sequence</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
                <span class="n">columns</span><span class="o">=</span><span class="s">&#39;name,l,s,angle,x,y,z,theta&#39;</span><span class="p">,</span>
                <span class="n">madrange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
                <span class="n">fname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
-               <span class="n">retdict</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+               <span class="n">retdict</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+               <span class="n">use</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Run a survey on the model.</span>
-<span class="sd">         </span>
-<span class="sd">         :param string sequence: Sequence, if empty, using active or default sequence.</span>
+
+<span class="sd">         :param string sequence: Sequence, if empty, using active sequence.</span>
 <span class="sd">         :param string columns: Columns in the twiss table, can also be list of strings</span>
 <span class="sd">         :param string fname: Optionally, give name of file for tfs table.</span>
-<span class="sd">         :param bool retdict: Return dictionaries (default is an extended LookUpDict)</span>
+<span class="sd">         :param bool retdict: Return dictionaries (default is an extended LookUpDict).</span>
+<span class="sd">         :param bool use: Call use before survey.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="n">sequence</span><span class="o">==</span><span class="s">&#39;&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]:</span>
-                <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;default-sequence&#39;</span><span class="p">]</span>
-        
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span>
+
         <span class="n">this_range</span><span class="o">=</span><span class="s">&#39;&#39;</span>
         <span class="k">if</span> <span class="n">madrange</span><span class="p">:</span>
-            <span class="n">rangedict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_range_dict</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span><span class="n">madrange</span><span class="p">)</span>
+            <span class="n">rangedict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_range_dict</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="n">sequence</span><span class="p">,</span><span class="n">madrange</span><span class="o">=</span><span class="n">madrange</span><span class="p">)</span>
             <span class="n">this_range</span><span class="o">=</span><span class="n">rangedict</span><span class="p">[</span><span class="s">&#39;madx-range&#39;</span><span class="p">]</span>
-        
+
         <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;sequence&#39;</span><span class="p">:</span><span class="n">sequence</span><span class="p">,</span>
               <span class="s">&#39;columns&#39;</span><span class="p">:</span><span class="n">columns</span><span class="p">,</span>
               <span class="s">&#39;madrange&#39;</span><span class="p">:</span><span class="n">this_range</span><span class="p">,</span>
-              <span class="s">&#39;fname&#39;</span><span class="p">:</span><span class="n">fname</span><span class="p">}</span>
+              <span class="s">&#39;fname&#39;</span><span class="p">:</span><span class="n">fname</span><span class="p">,</span>
+              <span class="s">&#39;use&#39;</span><span class="p">:</span><span class="n">use</span><span class="p">}</span>
         <span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sendrecv</span><span class="p">((</span><span class="s">&#39;survey&#39;</span><span class="p">,</span><span class="n">args</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">retdict</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">t</span><span class="p">,</span><span class="n">s</span>
         <span class="kn">from</span> <span class="nn">cern.pymad.domain</span> <span class="kn">import</span> <span class="n">TfsTable</span><span class="p">,</span> <span class="n">TfsSummary</span>
         <span class="k">return</span> <span class="n">TfsTable</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="n">TfsSummary</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-    </div>
+</div>
 <div class="viewcode-block" id="model.aperture"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.model.aperture">[docs]</a>    <span class="k">def</span> <span class="nf">aperture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                <span class="n">sequence</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
                <span class="n">madrange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
                <span class="n">columns</span><span class="o">=</span><span class="s">&#39;name,l,s,n1,aper_1,aper_2,aper_3,aper_4&#39;</span><span class="p">,</span>
                <span class="n">fname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
-               <span class="n">retdict</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+               <span class="n">retdict</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+               <span class="n">use</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Get the aperture from the model.</span>
-<span class="sd">         </span>
-<span class="sd">         :param string sequence: Sequence, if empty, using default sequence.</span>
+
+<span class="sd">         :param string sequence: Sequence, if empty, using active sequence.</span>
 <span class="sd">         :param string madrange: Range, if empty, the full sequence is chosen.</span>
 <span class="sd">         :param string columns: Columns in the twiss table, can also be list of strings</span>
 <span class="sd">         :param string fname: Optionally, give name of file for tfs table.</span>
-<span class="sd">         :param bool retdict: Return dictionaries (default is an extended LookUpDict)</span>
+<span class="sd">         :param bool retdict: Return dictionaries (default is an extended LookUpDict).</span>
+<span class="sd">         :param bool use: Call use before aperture.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="kn">from</span> <span class="nn">cern.pymad.domain</span> <span class="kn">import</span> <span class="n">TfsTable</span><span class="p">,</span> <span class="n">TfsSummary</span>
-        <span class="k">if</span> <span class="n">sequence</span><span class="o">==</span><span class="s">&#39;&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]:</span>
-                <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;default-sequence&#39;</span><span class="p">]</span>
-        <span class="n">seq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">sequence</span><span class="p">]</span>
-        
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_twisscalled</span><span class="p">[</span><span class="n">sequence</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
         <span class="c"># Calling &quot;basic aperture files&quot;</span>
@@ -469,7 +528,7 @@
         <span class="n">offsets</span><span class="o">=</span><span class="s">&#39;&#39;</span>
         <span class="n">this_range</span><span class="o">=</span><span class="s">&#39;&#39;</span>
         <span class="k">if</span> <span class="n">madrange</span><span class="p">:</span>
-            <span class="n">rangedict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_range_dict</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span><span class="n">madrange</span><span class="p">)</span>
+            <span class="n">rangedict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_range_dict</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="n">sequence</span><span class="p">,</span><span class="n">madrange</span><span class="o">=</span><span class="n">madrange</span><span class="p">)</span>
             <span class="n">this_range</span><span class="o">=</span><span class="n">rangedict</span><span class="p">[</span><span class="s">&#39;madx-range&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="s">&#39;aper-offset&#39;</span> <span class="ow">in</span> <span class="n">rangedict</span><span class="p">:</span>
                 <span class="n">offsets</span><span class="o">=</span><span class="n">rangedict</span><span class="p">[</span><span class="s">&#39;aper-offset&#39;</span><span class="p">]</span>
@@ -485,28 +544,38 @@
                     <span class="n">offsets</span><span class="o">=</span><span class="n">offsets_tmp</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">offsets</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_file_path</span><span class="p">(</span><span class="n">offsets</span><span class="p">)</span><span class="o">+</span><span class="n">offsets</span><span class="p">[</span><span class="s">&#39;path&#39;</span><span class="p">]</span>
-        
+
         <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;sequence&#39;</span><span class="p">:</span><span class="n">sequence</span><span class="p">,</span>
               <span class="s">&#39;madrange&#39;</span><span class="p">:</span><span class="n">this_range</span><span class="p">,</span>
               <span class="s">&#39;columns&#39;</span><span class="p">:</span><span class="n">columns</span><span class="p">,</span>
               <span class="s">&#39;offsets&#39;</span><span class="p">:</span><span class="n">offsets</span><span class="p">,</span>
-              <span class="s">&#39;fname&#39;</span><span class="p">:</span><span class="n">fname</span><span class="p">}</span>
+              <span class="s">&#39;fname&#39;</span><span class="p">:</span><span class="n">fname</span><span class="p">,</span>
+              <span class="s">&#39;use&#39;</span><span class="p">:</span><span class="n">use</span><span class="p">}</span>
         <span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sendrecv</span><span class="p">((</span><span class="s">&#39;aperture&#39;</span><span class="p">,</span><span class="n">args</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">USE_COUCH</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">offsets</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">retdict</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">t</span><span class="p">,</span><span class="n">s</span>
         <span class="k">return</span> <span class="n">TfsTable</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="n">TfsSummary</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        </div>
+</div>
     <span class="k">def</span> <span class="nf">_get_ranges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">sequence</span><span class="p">][</span><span class="s">&#39;ranges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        
-    <span class="k">def</span> <span class="nf">_get_range_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="p">,</span><span class="n">madrange</span><span class="p">):</span>
-        <span class="n">seq</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">sequence</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">madrange</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> is not a valid range name, available ranges: &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">madrange</span><span class="p">,</span><span class="s">&quot;&#39; &#39;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
-        <span class="k">return</span> <span class="n">seq</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">][</span><span class="n">madrange</span><span class="p">]</span>
-        
+
+    <span class="k">def</span> <span class="nf">_get_range_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">madrange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns the range dictionary. If sequence/range isn&#39;t given,</span>
+<span class="sd">        returns default for the model</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">sequence</span><span class="o">==</span><span class="s">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">sequence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;sequence&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">sequence</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> is not a valid sequence name, available sequences: &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sequence</span><span class="p">,</span><span class="s">&quot;&#39; &#39;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+        <span class="n">seqdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mdef</span><span class="p">[</span><span class="s">&#39;sequences&#39;</span><span class="p">][</span><span class="n">sequence</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">madrange</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_range</span><span class="p">(</span><span class="n">madrange</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">seqdict</span><span class="p">[</span><span class="s">&#39;ranges&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_active</span><span class="p">[</span><span class="s">&#39;range&#39;</span><span class="p">]]</span>
+
     <span class="k">def</span> <span class="nf">_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">command</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">((</span><span class="s">&#39;command&#39;</span><span class="p">,</span><span class="n">command</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recv</span><span class="p">()</span>
@@ -515,15 +584,29 @@
             <span class="k">print</span><span class="p">(</span><span class="s">&quot;Sending function call &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recv</span><span class="p">()</span>
-        
-           </div>
+
+</div>
 <span class="k">def</span> <span class="nf">_get_mdef</span><span class="p">(</span><span class="n">modelname</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">USE_COUCH</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cern</span><span class="o">.</span><span class="n">cpymad</span><span class="o">.</span><span class="n">_couch_server</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">modelname</span><span class="p">)</span>
-        
+
     <span class="n">fname</span><span class="o">=</span><span class="n">_get_filename</span><span class="p">(</span><span class="n">modelname</span><span class="p">)</span>
-    <span class="n">_dict</span> <span class="o">=</span> <span class="n">_get_file_content</span><span class="p">(</span><span class="n">modelname</span><span class="p">,</span><span class="n">fname</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">_dict</span><span class="p">)[</span><span class="n">modelname</span><span class="p">]</span>
+    <span class="n">_jdict</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">_get_file_content</span><span class="p">(</span><span class="n">modelname</span><span class="p">,</span><span class="n">fname</span><span class="p">))</span>
+    <span class="n">ret_dict</span><span class="o">=</span><span class="n">_jdict</span><span class="p">[</span><span class="n">modelname</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">extra_dict</span> <span class="ow">in</span> <span class="n">ret_dict</span><span class="p">[</span><span class="s">&#39;extends&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_jdict</span><span class="p">[</span><span class="n">extra_dict</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ret_dict</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">key</span><span class="o">==</span><span class="s">&#39;real&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">_jdict</span><span class="p">[</span><span class="n">extra_dict</span><span class="p">][</span><span class="n">key</span><span class="p">])</span><span class="o">==</span><span class="nb">dict</span><span class="p">:</span>
+                    <span class="n">ret_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_jdict</span><span class="p">[</span><span class="n">extra_dict</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">_jdict</span><span class="p">[</span><span class="n">extra_dict</span><span class="p">][</span><span class="n">key</span><span class="p">])</span><span class="o">==</span><span class="nb">list</span><span class="p">:</span>
+                    <span class="n">ret_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_jdict</span><span class="p">[</span><span class="n">extra_dict</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Could not extend </span><span class="si">%s</span><span class="s"> model with </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">modelname</span><span class="p">,</span><span class="n">extra_dict</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">_jdict</span><span class="p">[</span><span class="n">extra_dict</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">ret_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_jdict</span><span class="p">[</span><span class="n">extra_dict</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">ret_dict</span>
 
 <span class="k">def</span> <span class="nf">_get_filename</span><span class="p">(</span><span class="n">modelname</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">cern.cpymad</span> <span class="kn">import</span> <span class="n">listModels</span>
@@ -534,15 +617,42 @@
 <span class="k">def</span> <span class="nf">_get_file_content</span><span class="p">(</span><span class="n">modelname</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">USE_COUCH</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">cern</span><span class="o">.</span><span class="n">cpymad</span><span class="o">.</span><span class="n">_couch_server</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">modelname</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
-    <span class="n">filename</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;_models&#39;</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
+
     <span class="k">try</span><span class="p">:</span>
-         <span class="kn">import</span> <span class="nn">pkgutil</span>
-         <span class="n">stream</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">pkg_resources</span>
-        <span class="n">stream</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_string</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">stream</span>
-    
+        <span class="c"># first we try a simple read</span>
+        <span class="c"># this is necessary if the model path is outside the pymad installation</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">file_content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
+        <span class="c"># this can happen if the installed pymad is e.g. in an egg file</span>
+        <span class="c"># we then try to read the file from our pymad installation</span>
+        <span class="c"># using pkgutil.get_data</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;_models&#39;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pkgutil</span>
+            <span class="n">file_content</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="c"># not all python installations we currently support have pkgutil apparently..</span>
+            <span class="kn">import</span> <span class="nn">pkg_resources</span>
+            <span class="n">file_content</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_string</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">file_content</span>
+
+
+<div class="viewcode-block" id="save_model"><a class="viewcode-back" href="../../../cpymad/index.html#cern.cpymad.model.save_model">[docs]</a><span class="k">def</span> <span class="nf">save_model</span><span class="p">(</span><span class="n">model_def</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Saves the model definition defined by the dictionary model_def</span>
+<span class="sd">    to file filename. The file is in json format. We do not check</span>
+<span class="sd">    that the model is valid in any way.</span>
+
+<span class="sd">    It is recommended that you rather use the modeldefs.model.save_model,</span>
+<span class="sd">    once it is ready.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">model_def</span><span class="p">)</span><span class="o">!=</span><span class="nb">dict</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;model_def must be a dictionary!&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">!=</span><span class="nb">type</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;filename must be a string!&#39;</span><span class="p">)</span>
+    <span class="nb">file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">model_def</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</div>
 <span class="k">class</span> <span class="nc">_modelProcess</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sender</span><span class="p">,</span><span class="n">receiver</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">history</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">recursive_history</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="o">=</span><span class="n">sender</span>
@@ -550,12 +660,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">=</span><span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">=</span><span class="n">history</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recursive_history</span><span class="o">=</span><span class="n">recursive_history</span>
-        <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> 
-    
+        <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">_madx</span><span class="o">=</span><span class="n">madx</span><span class="p">(</span><span class="n">histfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">,</span><span class="n">recursive_history</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recursive_history</span><span class="p">)</span>
         <span class="n">_madx</span><span class="o">.</span><span class="n">verbose</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-        <span class="n">_madx</span><span class="o">.</span><span class="n">append_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">USE_COUCH</span><span class="p">:</span>
             <span class="n">_couch_server</span><span class="o">=</span><span class="n">cern</span><span class="o">.</span><span class="n">cpymad</span><span class="o">.</span><span class="n">_couch</span><span class="o">.</span><span class="n">couch</span><span class="o">.</span><span class="n">Server</span><span class="p">()</span>
             <span class="n">_madx</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">_couch_server</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span><span class="s">&#39;initscript&#39;</span><span class="p">))</span>
@@ -584,14 +693,16 @@
                                      <span class="n">columns</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;columns&#39;</span><span class="p">],</span>
                                      <span class="n">pattern</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;pattern&#39;</span><span class="p">],</span>
                                      <span class="n">fname</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;fname&#39;</span><span class="p">],</span>
-                                     <span class="n">twiss_init</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;twiss-init&#39;</span><span class="p">]</span>
-                                     <span class="p">,</span><span class="n">retdict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                                     <span class="n">twiss_init</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;twiss-init&#39;</span><span class="p">],</span>
+                                     <span class="n">use</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;use&#39;</span><span class="p">],</span>
+                                     <span class="n">retdict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="p">))</span>
                 <span class="k">elif</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;survey&#39;</span><span class="p">:</span>
                     <span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="n">_madx</span><span class="o">.</span><span class="n">survey</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;sequence&#39;</span><span class="p">],</span>
                                      <span class="n">columns</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;columns&#39;</span><span class="p">],</span>
-                                     <span class="n">fname</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;fname&#39;</span><span class="p">]</span>
-                                     <span class="p">,</span><span class="n">retdict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                                     <span class="n">fname</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;fname&#39;</span><span class="p">],</span>
+                                     <span class="n">use</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;use&#39;</span><span class="p">],</span>
+                                     <span class="n">retdict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="p">))</span>
                 <span class="k">elif</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;aperture&#39;</span><span class="p">:</span>
                     <span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="n">_madx</span><span class="o">.</span><span class="n">aperture</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;sequence&#39;</span><span class="p">],</span>
@@ -599,6 +710,7 @@
                                        <span class="n">columns</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;columns&#39;</span><span class="p">],</span>
                                        <span class="n">offsets</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;offsets&#39;</span><span class="p">],</span>
                                        <span class="n">fname</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;fname&#39;</span><span class="p">],</span>
+                                       <span class="n">use</span><span class="o">=</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;use&#39;</span><span class="p">],</span>
                                        <span class="n">retdict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">sender</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">t</span><span class="p">,</span><span class="n">s</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
