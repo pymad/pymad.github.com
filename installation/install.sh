@@ -68,6 +68,7 @@ then
     [[ "`uname -a`" =~ "arwin" ]] && cmake_opt="$cmake_opt -DMADX_BUNDLE=OFF"
     cmake $cmake_opt ..
     make install
+    madxdir="--madxdir=$prefix"
 else
     echo "Mad-X library already existing"
 fi
@@ -103,7 +104,8 @@ else
 fi
 
 echo "Installing PyMad..."
-$python setup.py install --prefix=$prefix --record=install_manifest.txt > /dev/null
+$python setup.py build $madxdir > /dev/null
+$python setup.py install $madxdir --prefix=$prefix --record=install_manifest.txt > /dev/null
 if (( $? ))
 then
     echo "Installation failed"
@@ -149,7 +151,7 @@ echo "Removing temporary files..."
 if $delete_tmp
 then
     cd $base
-    rm -r $tmp
+    rm -rf $tmp
 fi
 echo "Done"
 
