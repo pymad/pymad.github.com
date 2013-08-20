@@ -1,0 +1,530 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cern.madx &mdash; PyMad 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="PyMad 0.2.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body> 
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../index.html"><img src="../../_static/pymad-logo-text.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for cern.madx</h1><div class="highlight"><pre>
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c"># This file is part of PyMad.</span>
+<span class="c"># </span>
+<span class="c"># Copyright (c) 2011, CERN. All rights reserved.</span>
+<span class="c"># </span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c"># you may not use this file except in compliance with the License.</span>
+<span class="c"># You may obtain a copy of the License at</span>
+<span class="c"># </span>
+<span class="c"># 	http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c"># </span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c"># See the License for the specific language governing permissions and</span>
+<span class="c"># limitations under the License.</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+
+<span class="c">#cython: embedsignature=True</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">.. module:: madx</span>
+<span class="sd">.. moduleauthor:: Yngve Inntjore Levinsen &lt;Yngve.Inntjore.Levinsen.at.cern.ch&gt;</span>
+
+<span class="sd">Main module to interface with Mad-X library.</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">cern.pymad.globals</span>
+<span class="kn">from</span> <span class="nn">cern.libmadx</span> <span class="kn">import</span> <span class="n">_madx_tools</span>
+
+<span class="n">_madstarted</span><span class="o">=</span><span class="bp">False</span>
+
+<span class="c"># I think this is deprecated..</span>
+<span class="n">_loaded_models</span><span class="o">=</span><span class="p">[]</span>
+
+<span class="c"># private utility functions</span>
+<span class="k">def</span> <span class="nf">_tmp_filename</span><span class="p">(</span><span class="n">operation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a name for a temporary file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">operation</span> <span class="o">+</span> <span class="s">&#39;.temp.tfs&#39;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">):</span>
+        <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">operation</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;.temp.tfs&#39;</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">tmpfile</span>
+
+<span class="c"># main interface</span>
+<div class="viewcode-block" id="madx"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx">[docs]</a><span class="k">class</span> <span class="nc">madx</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Python class which interfaces to Mad-X library</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">histfile</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">recursive_history</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initializing Mad-X instance</span>
+<span class="sd">        </span>
+<span class="sd">        :param str histfile: (optional) name of file which will contain all Mad-X commands.</span>
+<span class="sd">        :param bool recursive_history: If true, history file will contain no calls to other files. </span>
+<span class="sd">                                       Instead, recursively writing commands from these files when called.</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">global</span> <span class="n">_madstarted</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_madstarted</span><span class="p">:</span>
+            <span class="n">madx_start</span><span class="p">()</span>
+            <span class="n">_madstarted</span><span class="o">=</span><span class="bp">True</span>
+        <span class="k">if</span> <span class="n">histfile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">=</span><span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hfile</span><span class="o">=</span><span class="nb">file</span><span class="p">(</span><span class="n">histfile</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rechist</span><span class="o">=</span><span class="n">recursive_history</span>
+        <span class="k">elif</span> <span class="n">cern</span><span class="o">.</span><span class="n">pymad</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">MAD_HISTORY_BASE</span><span class="p">:</span>
+            <span class="n">base</span><span class="o">=</span><span class="n">cern</span><span class="o">.</span><span class="n">pymad</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">MAD_HISTORY_BASE</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">=</span><span class="bp">True</span>
+            <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+            <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">base</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.madx&#39;</span><span class="p">):</span>
+                <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hfile</span><span class="o">=</span><span class="nb">file</span><span class="p">(</span><span class="n">base</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.madx&#39;</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rechist</span><span class="o">=</span><span class="n">recursive_history</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="o">=</span><span class="bp">False</span>
+            <span class="k">if</span> <span class="n">recursive_history</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&quot;WARNING: you cannot get recursive history without history file...&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rechist</span><span class="o">=</span><span class="bp">False</span>
+    
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">         Closes history file</span>
+<span class="sd">         madx_finish should</span>
+<span class="sd">         not be called since</span>
+<span class="sd">         other objects might still be</span>
+<span class="sd">         running..</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rechist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c">#madx_finish()</span>
+
+<div class="viewcode-block" id="madx.command"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.command">[docs]</a>    <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cmd</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">         Send a general Mad-X command. </span>
+<span class="sd">         Some sanity checks are performed.</span>
+<span class="sd">         </span>
+<span class="sd">         :param string cmd: command</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">cmd</span><span class="o">=</span><span class="n">_madx_tools</span><span class="o">.</span><span class="n">_fixcmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="o">==</span><span class="nb">int</span><span class="p">:</span> <span class="c"># means we should not execute command</span>
+            <span class="k">return</span> <span class="n">cmd</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="o">==</span><span class="nb">list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cmd</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_single_cmd</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_single_cmd</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    </div>
+    <span class="k">def</span> <span class="nf">_single_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cmd</span><span class="p">):</span>    
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cmd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_writeHist</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_writeHist</span><span class="p">(</span><span class="n">cmd</span><span class="o">+</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_madx_tools</span><span class="o">.</span><span class="n">_checkCommand</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+            <span class="n">madx_input</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    
+    <span class="k">def</span> <span class="nf">help</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cmd</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cmd</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;Information about command: &quot;</span><span class="o">+</span><span class="n">cmd</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">cmd</span><span class="o">=</span><span class="s">&#39;help,&#39;</span><span class="o">+</span><span class="n">cmd</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cmd</span><span class="o">=</span><span class="s">&#39;help&#39;</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;Available commands in Mad-X: &quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="madx.call"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">         Call a file</span>
+<span class="sd">         </span>
+<span class="sd">         :param string filename: Name of input file to call</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">fname</span><span class="o">=</span><span class="n">filename</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+            <span class="n">fname</span><span class="o">=</span><span class="n">filename</span><span class="o">+</span><span class="s">&#39;.madx&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+            <span class="n">fname</span><span class="o">=</span><span class="n">filename</span><span class="o">+</span><span class="s">&#39;.mad&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;ERROR: &quot;</span><span class="o">+</span><span class="n">filename</span><span class="o">+</span><span class="s">&quot; not found&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="n">cmd</span><span class="o">=</span><span class="s">&#39;call,file=&quot;&#39;</span><span class="o">+</span><span class="n">fname</span><span class="o">+</span><span class="s">&#39;&quot;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="c">##</span>
+    <span class="c"># @brief run select command for a flag..</span>
+    <span class="c"># @param flag [string] the flag to run select on</span>
+    <span class="c"># @param pattern [list] the new pattern</span>
+    <span class="c"># @param columns [list/string] the columns you want for the flag</span></div>
+    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="p">,</span><span class="n">columns</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;SELECT, FLAG=&#39;</span><span class="o">+</span><span class="n">flag</span><span class="o">+</span><span class="s">&#39;, CLEAR;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="o">==</span><span class="nb">list</span><span class="p">:</span>
+            <span class="n">clms</span><span class="o">=</span><span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">clms</span><span class="o">=</span><span class="n">columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;SELECT, FLAG=&#39;</span><span class="o">+</span><span class="n">flag</span><span class="o">+</span><span class="s">&#39;, COLUMN=&#39;</span><span class="o">+</span><span class="n">clms</span><span class="o">+</span><span class="s">&#39;;&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pattern</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;SELECT, FLAG=&#39;</span><span class="o">+</span><span class="n">flag</span><span class="o">+</span><span class="s">&#39;, PATTERN=&#39;</span><span class="o">+</span><span class="n">p</span><span class="o">+</span><span class="s">&#39;;&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="madx.twiss"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.twiss">[docs]</a>    <span class="k">def</span> <span class="nf">twiss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">sequence</span><span class="p">,</span>
+              <span class="n">pattern</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;full&#39;</span><span class="p">],</span>
+              <span class="n">columns</span><span class="o">=</span><span class="s">&#39;name,s,betx,bety,x,y,dx,dy,px,py,mux,muy,l,k1l,angle,k2l&#39;</span><span class="p">,</span>
+              <span class="n">madrange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="n">fname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="n">retdict</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">betx</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">bety</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">alfx</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">alfy</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">twiss_init</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+              <span class="n">chrom</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+              <span class="n">use</span><span class="o">=</span><span class="bp">True</span>
+              <span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">            Runs select+use+twiss on the sequence selected</span>
+
+<span class="sd">            :param string sequence: name of sequence</span>
+<span class="sd">            :param string fname: name of file to store tfs table</span>
+<span class="sd">            :param list pattern: pattern to include in table</span>
+<span class="sd">            :param list/string columns: columns to include in table</span>
+<span class="sd">            :param bool retdict: if true, returns tables as dictionary types</span>
+<span class="sd">            :param dict twiss_init: dictionary of twiss initialization variables</span>
+<span class="sd">            :param bool use: Call use before aperture.</span>
+<span class="sd">            :param bool chrom: Also calculate chromatic functions (slower)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">&#39;twiss&#39;</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;set, format=&quot;12.6F&quot;;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">use</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="n">_tmpcmd</span><span class="o">=</span><span class="s">&#39;twiss, sequence=&#39;</span><span class="o">+</span><span class="n">sequence</span><span class="o">+</span><span class="s">&#39;,&#39;</span><span class="o">+</span><span class="n">_madx_tools</span><span class="o">.</span><span class="n">_add_range</span><span class="p">(</span><span class="n">madrange</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">chrom</span><span class="p">:</span>
+            <span class="n">_tmpcmd</span><span class="o">+=</span><span class="s">&#39;,chrom&#39;</span>
+        <span class="k">if</span> <span class="n">_tmpcmd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;,&#39;</span><span class="p">:</span>
+            <span class="n">_tmpcmd</span><span class="o">=</span><span class="n">_tmpcmd</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">fname</span><span class="p">:</span> <span class="c"># we only need this if user wants the file to be written..</span>
+            <span class="n">_tmpcmd</span><span class="o">+=</span><span class="s">&#39;, file=&quot;&#39;</span><span class="o">+</span><span class="n">fname</span><span class="o">+</span><span class="s">&#39;&quot;&#39;</span>
+        <span class="k">for</span> <span class="n">i_var</span><span class="p">,</span><span class="n">i_val</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&#39;betx&#39;</span><span class="p">:</span><span class="n">betx</span><span class="p">,</span><span class="s">&#39;bety&#39;</span><span class="p">:</span><span class="n">bety</span><span class="p">,</span><span class="s">&#39;alfx&#39;</span><span class="p">:</span><span class="n">alfx</span><span class="p">,</span><span class="s">&#39;alfy&#39;</span><span class="p">:</span><span class="n">alfy</span><span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">i_val</span><span class="o">!=</span><span class="bp">None</span><span class="p">:</span>
+                <span class="n">_tmpcmd</span><span class="o">+=</span><span class="s">&#39;,&#39;</span><span class="o">+</span><span class="n">i_var</span><span class="o">+</span><span class="s">&#39;=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i_val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">twiss_init</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i_var</span><span class="p">,</span><span class="n">i_val</span> <span class="ow">in</span> <span class="n">twiss_init</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">i_var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">,</span><span class="s">&#39;closed-orbit&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">i_val</span><span class="o">==</span><span class="bp">True</span><span class="p">:</span>
+                        <span class="n">_tmpcmd</span><span class="o">+=</span><span class="s">&#39;,&#39;</span><span class="o">+</span><span class="n">i_var</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">_tmpcmd</span><span class="o">+=</span><span class="s">&#39;,&#39;</span><span class="o">+</span><span class="n">i_var</span><span class="o">+</span><span class="s">&#39;=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i_val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">_tmpcmd</span><span class="o">+</span><span class="s">&#39;;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">table</span><span class="o">.</span><span class="n">get_dict_from_mem</span><span class="p">(</span><span class="s">&#39;twiss&#39;</span><span class="p">,</span><span class="n">columns</span><span class="p">,</span><span class="n">retdict</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="madx.survey"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.survey">[docs]</a>    <span class="k">def</span> <span class="nf">survey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">sequence</span><span class="p">,</span>
+              <span class="n">pattern</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;full&#39;</span><span class="p">],</span>
+              <span class="n">columns</span><span class="o">=</span><span class="s">&#39;name,l,s,angle,x,y,z,theta&#39;</span><span class="p">,</span>
+              <span class="n">madrange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="n">fname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="n">retdict</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">use</span><span class="o">=</span><span class="bp">True</span>
+              <span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            Runs select+use+survey on the sequence selected</span>
+<span class="sd">            </span>
+<span class="sd">            :param string sequence: name of sequence</span>
+<span class="sd">            :param string fname: name of file to store tfs table</span>
+<span class="sd">            :param list pattern: pattern to include in table</span>
+<span class="sd">            :param string/list columns: Columns to include in table</span>
+<span class="sd">            :param bool retdict: if true, returns tables as dictionary types</span>
+<span class="sd">            :param bool use: Call use before survey.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">fname</span> <span class="ow">or</span> <span class="n">_tmp_filename</span><span class="p">(</span><span class="s">&#39;survey&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">&#39;survey&#39;</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;set, format=&quot;12.6F&quot;;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">use</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;survey,&#39;</span><span class="o">+</span><span class="n">_madx_tools</span><span class="o">.</span><span class="n">_add_range</span><span class="p">(</span><span class="n">madrange</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; file=&quot;&#39;</span><span class="o">+</span><span class="n">tmpfile</span><span class="o">+</span><span class="s">&#39;&quot;;&#39;</span><span class="p">)</span>
+        <span class="n">tab</span><span class="p">,</span><span class="n">param</span><span class="o">=</span><span class="n">_madx_tools</span><span class="o">.</span><span class="n">_get_dict</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">,</span><span class="n">retdict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fname</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tab</span><span class="p">,</span><span class="n">param</span>
+</div>
+<div class="viewcode-block" id="madx.aperture"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.aperture">[docs]</a>    <span class="k">def</span> <span class="nf">aperture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">sequence</span><span class="p">,</span>
+              <span class="n">pattern</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;full&#39;</span><span class="p">],</span>
+              <span class="n">madrange</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="n">columns</span><span class="o">=</span><span class="s">&#39;name,l,angle,x,y,z,theta&#39;</span><span class="p">,</span>
+              <span class="n">offsets</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="n">fname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+              <span class="n">retdict</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">use</span><span class="o">=</span><span class="bp">False</span>
+              <span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">         Runs select+use+aperture on the sequence selected</span>
+<span class="sd">         </span>
+<span class="sd">         @param sequence [string] name of sequence</span>
+<span class="sd">         @param fname [string,optional] name of file to store tfs table</span>
+<span class="sd">         @param pattern [list, optional] pattern to include in table</span>
+<span class="sd">         @param columns [string or list, optional] columns to include in table</span>
+<span class="sd">            :param bool retdict: if true, returns tables as dictionary types</span>
+<span class="sd">         :param bool use: Call use before aperture.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">fname</span> <span class="ow">or</span> <span class="n">_tmp_filename</span><span class="p">(</span><span class="s">&#39;aperture&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">&#39;aperture&#39;</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;set, format=&quot;12.6F&quot;;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">use</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Warning, use before aperture is known to cause problems&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span> <span class="c"># this seems to cause a bug?</span>
+        <span class="n">_cmd</span><span class="o">=</span><span class="s">&#39;aperture,&#39;</span><span class="o">+</span><span class="n">_madx_tools</span><span class="o">.</span><span class="n">_add_range</span><span class="p">(</span><span class="n">madrange</span><span class="p">)</span><span class="o">+</span><span class="n">_madx_tools</span><span class="o">.</span><span class="n">_add_offsets</span><span class="p">(</span><span class="n">offsets</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fname</span><span class="p">:</span>
+            <span class="n">_cmd</span><span class="o">+=</span><span class="s">&#39;,file=&quot;&#39;</span><span class="o">+</span><span class="n">fname</span><span class="o">+</span><span class="s">&#39;&quot;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">_cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">table</span><span class="o">.</span><span class="n">get_dict_from_mem</span><span class="p">(</span><span class="s">&#39;aperture&#39;</span><span class="p">,</span><span class="n">columns</span><span class="p">,</span><span class="n">retdict</span><span class="p">)</span>
+        </div>
+    <span class="k">def</span> <span class="nf">use</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;use, sequence=&#39;</span><span class="o">+</span><span class="n">sequence</span><span class="o">+</span><span class="s">&#39;;&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="madx.match"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">sequence</span><span class="p">,</span>
+            <span class="n">constraints</span><span class="p">,</span>
+            <span class="n">vary</span><span class="p">,</span>
+            <span class="n">weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;lmdif&#39;</span><span class="p">],</span>
+            <span class="n">fname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">betx</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">bety</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">alfx</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">alfy</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">twiss_init</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">retdict</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform match operation.</span>
+
+<span class="sd">        @param sequence [string] name of sequence</span>
+<span class="sd">        @param constraints [list] constraints to pose during matching</span>
+<span class="sd">        @param vary [list or dict] vary commands</span>
+<span class="sd">        @param weight [dict] weights for matching parameters </span>
+
+<span class="sd">        Each item of constraints must be a list or dict directly passable</span>
+<span class="sd">        to _mad_command().</span>
+
+<span class="sd">        If vary is a list each entry must either be list or a dict which can</span>
+<span class="sd">        be passed to _mad_command(). Otherwise the value is taken to be the</span>
+<span class="sd">        NAME of the variable.</span>
+<span class="sd">        If vary is a dict the key corresponds to the NAME. Its value is a</span>
+<span class="sd">        list or dict passable to _mad_command(). If this is not the case the</span>
+<span class="sd">        value is taken as the STEP value.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        &gt;&gt;&gt; m.match(</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;lhc&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     constraints=[{&#39;betx&#39;:3, &#39;range&#39;:&#39;#e&#39;}, [(&#39;bety&#39;,&#39;&lt;&#39;,3)]],</span>
+<span class="sd">        &gt;&gt;&gt;     vary=[&#39;K1&#39;, {&#39;name&#39;:&#39;K2&#39;, &#39;step&#39;:1e-6}],</span>
+<span class="sd">        &gt;&gt;&gt;     weight=dict(betx=1, bety=2),</span>
+<span class="sd">        &gt;&gt;&gt;     method=[&#39;lmdif&#39;, dict(calls=100, tolerance=1e-6)]</span>
+<span class="sd">        &gt;&gt;&gt;     )</span>
+
+<span class="sd">        Is equivalent to:</span>
+
+<span class="sd">        match, sequence=lhc;</span>
+<span class="sd">        constraint, betx=3, range=#e;</span>
+<span class="sd">        constraint, bety&lt;3;</span>
+<span class="sd">        vary, name=K1;</span>
+<span class="sd">        vary, name=K2, step=1e-6;</span>
+<span class="sd">        weight, betx=1, bety=2;</span>
+<span class="sd">        lmdif, calls=100, tolerance=1e-6;</span>
+<span class="sd">        endmatch;</span>
+
+<span class="sd">        &gt;&gt;&gt; m.match(</span>
+<span class="sd">        &gt;&gt;&gt;     &#39;lhc&#39;,</span>
+<span class="sd">        &gt;&gt;&gt;     [{&#39;betx&#39;:3, &#39;range&#39;:&#39;#e&#39;}],</span>
+<span class="sd">        &gt;&gt;&gt;     {&#39;K1&#39;: {&#39;upper&#39;:3}, &#39;K2&#39;:1e-6})</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+
+<span class="sd">        Is equivalent to:</span>
+
+<span class="sd">        match, sequence=lhc;</span>
+<span class="sd">        constraint, betx=3, range=#e;</span>
+<span class="sd">        vary, name=K1, upper=3;</span>
+<span class="sd">        vary, name=K2, step=1e-6;</span>
+<span class="sd">        endmatch;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">fname</span> <span class="ow">or</span> <span class="n">_tmp_filename</span><span class="p">(</span><span class="s">&#39;match&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">twiss_init</span><span class="p">:</span>
+            <span class="n">twiss_init</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&#39;betx&#39;</span><span class="p">:</span><span class="n">betx</span><span class="p">,</span><span class="s">&#39;bety&#39;</span><span class="p">:</span><span class="n">bety</span><span class="p">,</span><span class="s">&#39;alfx&#39;</span><span class="p">:</span><span class="n">alfx</span><span class="p">,</span><span class="s">&#39;alfy&#39;</span><span class="p">:</span><span class="n">alfy</span><span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">twiss_init</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="c"># MATCH (=start)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="n">_madx_tools</span><span class="o">.</span><span class="n">_mad_command</span><span class="p">(</span><span class="s">&#39;match&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;sequence&#39;</span><span class="p">,</span> <span class="n">sequence</span><span class="p">),</span> <span class="o">**</span><span class="n">twiss_init</span><span class="p">)</span>
+
+        <span class="c"># CONSTRAINT</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraints</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="n">_madx_tools</span><span class="o">.</span><span class="n">_mad_command_unpack</span><span class="p">(</span><span class="s">&#39;constraint&#39;</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+
+        <span class="c"># VARY</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vary</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">vary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">cmd</span> <span class="o">+=</span> <span class="n">_madx_tools</span><span class="o">.</span><span class="n">_mad_command_unpack</span><span class="p">(</span><span class="s">&#39;vary&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                    <span class="n">cmd</span> <span class="o">+=</span> <span class="n">_madx_tools</span><span class="o">.</span><span class="n">_mad_command</span><span class="p">(</span><span class="s">&#39;vary&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vary</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vary</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">cmd</span> <span class="o">+=</span> <span class="n">_madx_tools</span><span class="o">.</span><span class="n">_mad_command_unpack</span><span class="p">(</span><span class="s">&#39;vary&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                    <span class="n">cmd</span> <span class="o">+=</span> <span class="n">_madx_tools</span><span class="o">.</span><span class="n">_mad_command</span><span class="p">(</span><span class="s">&#39;vary&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;vary must be list or dict.&quot;</span><span class="p">)</span>
+
+        <span class="c"># WEIGHT</span>
+        <span class="k">if</span> <span class="n">weight</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="n">_madx_tools</span><span class="o">.</span><span class="n">_mad_command_unpack</span><span class="p">(</span><span class="s">&#39;weight&#39;</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
+
+        <span class="c"># METHOD</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="n">_madx_tools</span><span class="o">.</span><span class="n">_mad_command_unpack</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+
+        <span class="c"># ENDMATCH</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="n">_madx_tools</span><span class="o">.</span><span class="n">_mad_command</span><span class="p">(</span><span class="s">&#39;endmatch&#39;</span><span class="p">,</span> <span class="n">knobfile</span><span class="o">=</span><span class="n">tmpfile</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">,</span><span class="n">initial</span><span class="o">=</span><span class="n">_madx_tools</span><span class="o">.</span><span class="n">_read_knobfile</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">,</span> <span class="n">retdict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fname</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">,</span><span class="n">initial</span>
+
+    <span class="c"># turn on/off verbose outupt..</span></div>
+    <span class="k">def</span> <span class="nf">verbose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">switch</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">switch</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&quot;option, echo, warn, info&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&quot;option, -echo, -warn, -info&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_writeHist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">command</span><span class="p">):</span>
+        <span class="c"># this still brakes for &quot;multiline commands&quot;...</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rechist</span> <span class="ow">and</span> <span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">==</span><span class="s">&#39;call&#39;</span><span class="p">:</span>
+            <span class="n">cfile</span><span class="o">=</span><span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;file=&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;FILE=&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&quot;DBG: call file &quot;</span><span class="p">,</span><span class="n">cfile</span><span class="p">)</span>
+            <span class="n">fin</span><span class="o">=</span><span class="nb">file</span><span class="p">(</span><span class="n">cfile</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">fin</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_writeHist</span><span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hfile</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+    
+<div class="viewcode-block" id="madx.get_sequences"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.get_sequences">[docs]</a>    <span class="k">def</span> <span class="nf">get_sequences</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">         Returns the sequences currently in memory</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ret</span><span class="o">=</span><span class="p">{}</span>
+        <span class="k">return</span> <span class="n">ret</span>
+        <span class="c">#print &quot;Currently number of sequenses available:&quot;,seqs.curr</span>
+        <span class="c">#print &quot;Name of list:&quot;,seqs.name</span>
+        </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">home</a>|&nbsp;</li>
+        <li><a href="../../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Y.I. Levinsen, K. Fuchsberger (CERN) .
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
