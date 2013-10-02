@@ -29,7 +29,7 @@
     <link rel="next" title="Examples" href="../examples/index.html" />
     <link rel="prev" title="CERN PyMad" href="../index.html" /> 
   </head>
-  <body> 
+  <body>
 
 <div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
 <a href="../index.html"><img src="../_static/pymad-logo-text.png" border="0" alt="py4sci"/></a>
@@ -62,7 +62,8 @@
   <ul>
 <li><a class="reference internal" href="#">Installation Instructions</a><ul>
 <li><a class="reference internal" href="#jpymad">JPyMad</a></li>
-<li><a class="reference internal" href="#cpymad">CPyMad</a></li>
+<li><a class="reference internal" href="#cpymad-unix">CPyMad (unix)</a></li>
+<li><a class="reference internal" href="#cython-windows-mingw">Cython (windows, MinGW)</a></li>
 <li><a class="reference internal" href="#potential-problems">Potential problems</a></li>
 </ul>
 </li>
@@ -113,8 +114,8 @@ the command</p>
 </div>
 <p>The argument <em>&#8211;install-platlib</em> means we exclude external modules. The reason is that the external module cern.madx requires the dynamic library of Mad-X available on your system (which we here assume you do not have)</p>
 </div>
-<div class="section" id="cpymad">
-<h2>CPyMad<a class="headerlink" href="#cpymad" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cpymad-unix">
+<h2>CPyMad (unix)<a class="headerlink" href="#cpymad-unix" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt>First method, use installation script:</dt>
 <dd><p class="first">We provide an <a class="reference external" href="install.sh">installation script</a> which should do the full job for you. Download the script
@@ -159,8 +160,57 @@ and unpack it</p>
 <p>If you download JMad after following any of the methods described above for CPyMad,
 you will immediately have JPyMad available as well.</p>
 </div>
+<div class="section" id="cython-windows-mingw">
+<h2>Cython (windows, MinGW)<a class="headerlink" href="#cython-windows-mingw" title="Permalink to this headline">¶</a></h2>
+<p>At this time you have to build pymad manually.</p>
+<blockquote>
+<div><ul>
+<li><p class="first">If you want to install all system dependencies at once, I recommend <a class="reference external" href="https://code.google.com/p/pythonxy/">Python(x,y)</a>. This is a python development distribution including MinGW, Cython and Python2.7. Make sure Cython and MinGW are marked for installation.</p>
+</li>
+<li><p class="first">Download the Mad-X source from
+<a class="reference external" href="http://svnweb.cern.ch/world/wsvn/madx/trunk/madX/?op=dl&amp;rev=0&amp;isdir=1">svn</a>
+and unpack it.</p>
+</li>
+<li><p class="first">Build the Mad-X library as a <strong>shared library</strong> (<tt class="docutils literal"><span class="pre">.dll</span></tt>).
+Enter the folder madX and run the commands</p>
+<div class="highlight-bat"><div class="highlight"><pre>mkdir build &amp;&amp; <span class="k">cd</span> build
+cmake -G <span class="s2">&quot;MinGW Makefiles&quot;</span> -DBUILD_SHARED_LIBS:BOOL<span class="o">=</span><span class="k">ON</span> -DCMAKE_INSTALL_PREFIX<span class="o">=</span>..\madx-redist ..\
+make install
+</pre></div>
+</div>
+<p>This will install the headers, binaries and library files to the folder <tt class="docutils literal"><span class="pre">..\madx-redist</span></tt>.</p>
+<p>Executing CMake from the GUI, you have to add the <tt class="docutils literal"><span class="pre">BUILD_SHARED_LIBS</span></tt> option manually. Afterwards reconfigure and regenerate.</p>
+</li>
+<li><p class="first">Alternatively, if you have already built a static library you can convert it to a dynamic library using <tt class="docutils literal"><span class="pre">pexports</span></tt> and <tt class="docutils literal"><span class="pre">dlltool</span></tt> like so:</p>
+<div class="highlight-bat"><div class="highlight"><pre>mingw-get install mingw<span class="m">32</span>-pexports
+
+ar -x libptc.a
+gcc -shared *.obj -o libptc.dll -lgfortran
+pexports libptc.dll <span class="p">&gt;</span><span class="n">libptc</span>.def
+dlltool --dllname libptc.dll --def libptc.def --output-lib libptc.dll.a
+<span class="k">del</span> *.obj libptc.def
+
+ar -x libmadx.a
+gcc -shared *.obj -o libmadx.dll -L. -lptc.dll -lstdc++ -lgfortran
+pexports libmadx.dll <span class="p">&gt;</span><span class="n">libmadx</span>.def
+dlltool --dllname libmadx.dll --def libmadx.def --output-lib libmadx.dll.a
+<span class="k">del</span> *.obj libmadx.def
+</pre></div>
+</div>
+</li>
+<li><p class="first">In the folder <tt class="docutils literal"><span class="pre">pymad/src</span></tt>, run the command</p>
+<div class="highlight-bat"><div class="highlight"><pre>python setup.py install --madxdir<span class="o">=</span><span class="p">&lt;</span><span class="n">path</span>-to-your&gt;\madx-redist
+</pre></div>
+</div>
+<p>It is highly unlikely that your build succeeds at this point. See <a class="reference internal" href="#potential-problems"><em>Potential problems</em></a> for further information.</p>
+</li>
+<li><p class="first">Copy the <tt class="docutils literal"><span class="pre">.dll</span></tt> library files to either your system or better your applications runtime path.</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
 <div class="section" id="potential-problems">
-<h2>Potential problems<a class="headerlink" href="#potential-problems" title="Permalink to this headline">¶</a></h2>
+<span id="id2"></span><h2>Potential problems<a class="headerlink" href="#potential-problems" title="Permalink to this headline">¶</a></h2>
 <p>In the following we will try to keep a list of the various issues users have reported during installation.</p>
 <blockquote>
 <div><ul>
@@ -191,6 +241,56 @@ ImportError: No module named Cython.Distutils
 <blockquote>
 <div>Solution:
 In order to get cpymad, you need Cython installed on your system. If you cannot obtain that, use jpymad instead.</div></blockquote>
+<ul>
+<li><p class="first">Cannot find find -lpthread:</p>
+<p>Occurs:
+When linking libmadx with the <tt class="docutils literal"><span class="pre">-DMADX_STATIC:BOOL=ON</span></tt> cmake option specified.</p>
+<p>Reason:
+A static version of pthreads is not installed by default.</p>
+<p>Solution:
+Download a <a class="reference external" href="http://www.sourceware.org/pthreads-win32/">prebuilt version of the library</a>. You need the file <tt class="docutils literal"><span class="pre">libpthreadGC2.a</span></tt>. Copy it to <tt class="docutils literal"><span class="pre">C:\MinGW32-xy\lib\libpthread.a</span></tt>.</p>
+</li>
+<li><p class="first">Unable to find vcvarsall.bat:</p>
+<p>Occurs:
+While building <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></tt>.</p>
+<p>Reason:
+distutils is not configured to use MinGW.</p>
+<p>Solution:
+Add the following lines to <tt class="docutils literal"><span class="pre">C:\Python27\Lib\distutils\distutils.cfg</span></tt></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">build</span><span class="p">]</span>
+<span class="n">compiler</span><span class="o">=</span><span class="n">mingw32</span>
+</pre></div>
+</div>
+<p>If you do not want to modify your python system configuration you can place this as <tt class="docutils literal"><span class="pre">setup.cfg</span></tt> in the current directory. You can also specify the compiler on the command line:</p>
+<div class="highlight-bat"><div class="highlight"><pre>python setup.py build --madxdir<span class="o">=</span><span class="p">&lt;</span><span class="n">path</span>-to-your&gt;\madx-redist --compiler<span class="o">=</span>mingw<span class="m">32</span>
+python setup.py install --madxdir<span class="o">=</span><span class="p">&lt;</span><span class="n">path</span>-to-your&gt;\madx-redist
+</pre></div>
+</div>
+<p>See also <a class="reference external" href="http://stackoverflow.com/questions/2817869/error-unable-to-find-vcvarsall-bat">this question on stackoverflow</a>.</p>
+</li>
+<li><p class="first">distutils.unixcompiler not configured:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="o">...</span>
+  <span class="n">File</span> <span class="s">&quot;C:\Python27\lib\distutils\unixccompiler.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">227</span><span class="p">,</span> <span class="ow">in</span> <span class="n">runtime_library_dir_option</span>
+    <span class="n">compiler</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sysconfig</span><span class="o">.</span><span class="n">get_config_var</span><span class="p">(</span><span class="s">&quot;CC&quot;</span><span class="p">))</span>
+  <span class="n">File</span> <span class="s">&quot;C:\Python27\lib</span><span class="se">\n</span><span class="s">tpath.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">198</span><span class="p">,</span> <span class="ow">in</span> <span class="n">basename</span>
+    <span class="k">return</span> <span class="n">split</span><span class="p">(</span><span class="n">p</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">File</span> <span class="s">&quot;C:\Python27\lib</span><span class="se">\n</span><span class="s">tpath.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">170</span><span class="p">,</span> <span class="ow">in</span> <span class="n">split</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">splitdrive</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+  <span class="n">File</span> <span class="s">&quot;C:\Python27\lib</span><span class="se">\n</span><span class="s">tpath.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">125</span><span class="p">,</span> <span class="ow">in</span> <span class="n">splitdrive</span>
+    <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;:&#39;</span><span class="p">:</span>
+<span class="ne">TypeError</span><span class="p">:</span> <span class="s">&#39;NoneType&#39;</span> <span class="nb">object</span> <span class="n">has</span> <span class="n">no</span> <span class="n">attribute</span> <span class="s">&#39;__getitem__&#39;</span>
+</pre></div>
+</div>
+<p>Occurs:
+While building <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></tt>.</p>
+<p>Reason:
+Bug in distutils (?).</p>
+<p>Solution:
+Add the following line to the function <tt class="docutils literal"><span class="pre">_init_nt()</span></tt> in the file <tt class="docutils literal"><span class="pre">Lib\distutils\sysconfig.py</span></tt> of the python installation.</p>
+<p>For further reference see <a class="reference external" href="http://bugs.python.org/issue2437">a related issue</a>.</p>
+</li>
+</ul>
 </div></blockquote>
 </div>
 </div>

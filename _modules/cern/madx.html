@@ -28,7 +28,7 @@
     <link rel="top" title="PyMad 0.2.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
-  <body> 
+  <body>
 
 <div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
 <a href="../../index.html"><img src="../../_static/pymad-logo-text.png" border="0" alt="py4sci"/></a>
@@ -199,7 +199,7 @@
             <span class="n">madx_input</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">0</span>
     
-    <span class="k">def</span> <span class="nf">help</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cmd</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="madx.help"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.help">[docs]</a>    <span class="k">def</span> <span class="nf">help</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cmd</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">cmd</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&quot;Information about command: &quot;</span><span class="o">+</span><span class="n">cmd</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
             <span class="n">cmd</span><span class="o">=</span><span class="s">&#39;help,&#39;</span><span class="o">+</span><span class="n">cmd</span>
@@ -207,7 +207,7 @@
             <span class="n">cmd</span><span class="o">=</span><span class="s">&#39;help&#39;</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&quot;Available commands in Mad-X: &quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-    
+    </div>
 <div class="viewcode-block" id="madx.call"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.call">[docs]</a>    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">         Call a file</span>
@@ -229,7 +229,7 @@
     <span class="c"># @param flag [string] the flag to run select on</span>
     <span class="c"># @param pattern [list] the new pattern</span>
     <span class="c"># @param columns [list/string] the columns you want for the flag</span></div>
-    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="p">,</span><span class="n">columns</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="madx.select"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">flag</span><span class="p">,</span><span class="n">columns</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="p">[]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;SELECT, FLAG=&#39;</span><span class="o">+</span><span class="n">flag</span><span class="o">+</span><span class="s">&#39;, CLEAR;&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="o">==</span><span class="nb">list</span><span class="p">:</span>
             <span class="n">clms</span><span class="o">=</span><span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
@@ -238,7 +238,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;SELECT, FLAG=&#39;</span><span class="o">+</span><span class="n">flag</span><span class="o">+</span><span class="s">&#39;, COLUMN=&#39;</span><span class="o">+</span><span class="n">clms</span><span class="o">+</span><span class="s">&#39;;&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pattern</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;SELECT, FLAG=&#39;</span><span class="o">+</span><span class="n">flag</span><span class="o">+</span><span class="s">&#39;, PATTERN=&#39;</span><span class="o">+</span><span class="n">p</span><span class="o">+</span><span class="s">&#39;;&#39;</span><span class="p">)</span>
-
+</div>
 <div class="viewcode-block" id="madx.twiss"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.twiss">[docs]</a>    <span class="k">def</span> <span class="nf">twiss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">sequence</span><span class="p">,</span>
               <span class="n">pattern</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;full&#39;</span><span class="p">],</span>
@@ -353,9 +353,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">_cmd</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">table</span><span class="o">.</span><span class="n">get_dict_from_mem</span><span class="p">(</span><span class="s">&#39;aperture&#39;</span><span class="p">,</span><span class="n">columns</span><span class="p">,</span><span class="n">retdict</span><span class="p">)</span>
         </div>
-    <span class="k">def</span> <span class="nf">use</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="p">):</span>
+<div class="viewcode-block" id="madx.use"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.use">[docs]</a>    <span class="k">def</span> <span class="nf">use</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sequence</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;use, sequence=&#39;</span><span class="o">+</span><span class="n">sequence</span><span class="o">+</span><span class="s">&#39;;&#39;</span><span class="p">)</span>
-
+</div>
 <div class="viewcode-block" id="madx.match"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">sequence</span><span class="p">,</span>
@@ -472,12 +472,12 @@
         <span class="k">return</span> <span class="n">result</span><span class="p">,</span><span class="n">initial</span>
 
     <span class="c"># turn on/off verbose outupt..</span></div>
-    <span class="k">def</span> <span class="nf">verbose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">switch</span><span class="p">):</span>
+<div class="viewcode-block" id="madx.verbose"><a class="viewcode-back" href="../../cpymad/index.html#cern.madx.madx.verbose">[docs]</a>    <span class="k">def</span> <span class="nf">verbose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">switch</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">switch</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&quot;option, echo, warn, info&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&quot;option, -echo, -warn, -info&quot;</span><span class="p">)</span>
-
+</div>
     <span class="k">def</span> <span class="nf">_writeHist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">command</span><span class="p">):</span>
         <span class="c"># this still brakes for &quot;multiline commands&quot;...</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rechist</span> <span class="ow">and</span> <span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">==</span><span class="s">&#39;call&#39;</span><span class="p">:</span>

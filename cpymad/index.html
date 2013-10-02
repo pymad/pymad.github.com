@@ -28,7 +28,7 @@
     <link rel="top" title="PyMad 0.2.0 documentation" href="../index.html" />
     <link rel="prev" title="PyMad API" href="../api/index.html" /> 
   </head>
-  <body> 
+  <body>
 
 <div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
 <a href="../index.html"><img src="../_static/pymad-logo-text.png" border="0" alt="py4sci"/></a>
@@ -154,11 +154,11 @@ of numpy.array() objects, while strings are simple lists.</p>
 <p>Main module to interface with Mad-X library.</p>
 <dl class="class">
 <dt id="cern.madx.madx">
-<em class="property">class </em><tt class="descclassname">cern.madx.</tt><tt class="descname">madx</tt><big>(</big><em>histfile=''</em>, <em>recursive_history=False</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">cern.madx.</tt><tt class="descname">madx</tt><a class="reference internal" href="../_modules/cern/madx.html#madx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Python class which interfaces to Mad-X library</p>
 <dl class="method">
 <dt id="cern.madx.madx.aperture">
-<tt class="descname">aperture</tt><big>(</big><em>sequence, pattern=['full'], madrange='', columns='name,l,angle,x,y,z,theta', offsets='', fname='', retdict=False, use=False</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.aperture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.aperture" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">aperture</tt><big>(</big><em>self, sequence, pattern=['full'], madrange='', columns='name,l,angle,x,y,z,theta', offsets='', fname='', retdict=False, use=False</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.aperture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.aperture" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs select+use+aperture on the sequence selected</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -180,7 +180,7 @@ of numpy.array() objects, while strings are simple lists.</p>
 
 <dl class="method">
 <dt id="cern.madx.madx.call">
-<tt class="descname">call</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.call" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">call</tt><big>(</big><em>self</em>, <em>filename</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.call" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call a file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -194,8 +194,8 @@ of numpy.array() objects, while strings are simple lists.</p>
 
 <dl class="method">
 <dt id="cern.madx.madx.command">
-<tt class="descname">command</tt><big>(</big><em>cmd</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.command" title="Permalink to this definition">¶</a></dt>
-<dd><p>Send a general Mad-X command. 
+<tt class="descname">command</tt><big>(</big><em>self</em>, <em>cmd</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a general Mad-X command.
 Some sanity checks are performed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -209,14 +209,31 @@ Some sanity checks are performed.</p>
 
 <dl class="method">
 <dt id="cern.madx.madx.get_sequences">
-<tt class="descname">get_sequences</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.get_sequences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.get_sequences" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_sequences</tt><big>(</big><em>self</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.get_sequences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.get_sequences" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the sequences currently in memory</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="cern.madx.madx.help">
+<tt class="descname">help</tt><big>(</big><em>self</em>, <em>cmd=''</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.help"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.help" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="cern.madx.madx.match">
-<tt class="descname">match</tt><big>(</big><em>sequence, constraints, vary, weight=None, method=['lmdif'], fname='', betx=None, bety=None, alfx=None, alfy=None, twiss_init=None, retdict=False</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.match" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">match</tt><big>(</big><em>self, sequence, constraints, vary, weight=None, method=['lmdif'], fname='', betx=None, bety=None, alfx=None, alfy=None, twiss_init=None, retdict=False</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.match" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform match operation.</p>
+<p>&#64;param sequence [string] name of sequence
+&#64;param constraints [list] constraints to pose during matching
+&#64;param vary [list or dict] vary commands
+&#64;param weight [dict] weights for matching parameters</p>
+<p>For further reference, see madx.matchcommand().</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cern.madx.madx.matchcommand">
+<tt class="descname">matchcommand</tt><a class="headerlink" href="#cern.madx.madx.matchcommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>madx.matchcommand(sequence, constraints, vary, weight=None, method=[&#8216;lmdif&#8217;], fname=&#8217;&#8216;, betx=None, bety=None, alfx=None, alfy=None, twiss_init=None)</p>
+<p>Prepare a match command sequence.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -226,6 +243,7 @@ Some sanity checks are performed.</p>
 <li><strong>constraints</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; constraints to pose during matching</li>
 <li><strong>vary</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; vary commands (can also be dict)</li>
 <li><strong>weight</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; weights for matching parameters</li>
+<li><strong>method</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; Which method to apply</li>
 </ul>
 </td>
 </tr>
@@ -240,44 +258,47 @@ If vary is a dict the key corresponds to the NAME. Its value is a
 list or dict passable to _mad_command(). If this is not the case the
 value is taken as the STEP value.</p>
 <p>Examples:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s">&#39;lhc&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">constraints</span><span class="o">=</span><span class="p">[{</span><span class="s">&#39;betx&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s">&#39;range&#39;</span><span class="p">:</span><span class="s">&#39;#e&#39;</span><span class="p">},</span> <span class="p">[(</span><span class="s">&#39;bety&#39;</span><span class="p">,</span><span class="s">&#39;&lt;&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">)]],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">vary</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;K1&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span><span class="s">&#39;K2&#39;</span><span class="p">,</span> <span class="s">&#39;step&#39;</span><span class="p">:</span><span class="mf">1e-6</span><span class="p">}],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">weight</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">betx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bety</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">method</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;lmdif&#39;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">calls</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)]</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">madx</span><span class="o">.</span><span class="n">matchcommand</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s">&#39;lhc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">constraints</span><span class="o">=</span><span class="p">[{</span><span class="s">&#39;betx&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s">&#39;range&#39;</span><span class="p">:</span><span class="s">&#39;#e&#39;</span><span class="p">},</span> <span class="p">[(</span><span class="s">&#39;bety&#39;</span><span class="p">,</span><span class="s">&#39;&lt;&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">)]],</span>
+<span class="gp">... </span>    <span class="n">vary</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;K1&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span><span class="s">&#39;K2&#39;</span><span class="p">,</span> <span class="s">&#39;step&#39;</span><span class="p">:</span><span class="mf">1e-6</span><span class="p">}],</span>
+<span class="gp">... </span>    <span class="n">weight</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">betx</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bety</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;lmdif&#39;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">calls</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)]</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+<span class="go">match, sequence=lhc;</span>
+<span class="go">constraint, betx=3, range=#e;</span>
+<span class="go">constraint, bety&lt;3;</span>
+<span class="go">vary, name=K1;</span>
+<span class="go">vary, name=K2, step=1e-06;</span>
+<span class="go">weight, betx=1, bety=2;</span>
+<span class="go">lmdif, calls=100, tolerance=1e-06;</span>
+<span class="go">endmatch;</span>
 </pre></div>
 </div>
-<p>Is equivalent to:</p>
-<div class="highlight-python"><pre>match, sequence=lhc;
-constraint, betx=3, range=#e;
-constraint, bety&lt;3;
-vary, name=K1;
-vary, name=K2, step=1e-6;
-weight, betx=1, bety=2;
-lmdif, calls=100, tolerance=1e-6;
-endmatch;</pre>
-</div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="s">&#39;lhc&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[{</span><span class="s">&#39;betx&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s">&#39;range&#39;</span><span class="p">:</span><span class="s">&#39;#e&#39;</span><span class="p">}],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">{</span><span class="s">&#39;K1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;upper&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span> <span class="s">&#39;K2&#39;</span><span class="p">:</span><span class="mf">1e-6</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">madx</span><span class="o">.</span><span class="n">matchcommand</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s">&#39;lhc&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">constraints</span><span class="o">=</span><span class="p">[{</span><span class="s">&#39;betx&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s">&#39;range&#39;</span><span class="p">:</span><span class="s">&#39;#e&#39;</span><span class="p">}],</span>
+<span class="gp">... </span>    <span class="n">vary</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;K1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;upper&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span> <span class="s">&#39;K2&#39;</span><span class="p">:</span><span class="mf">1e-6</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">fname</span><span class="o">=</span><span class="s">&#39;knobs.txt&#39;</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+<span class="go">match, sequence=lhc;</span>
+<span class="go">constraint, betx=3, range=#e;</span>
+<span class="go">vary, upper=3, name=K1;</span>
+<span class="go">vary, name=K2, step=1e-06;</span>
+<span class="go">lmdif;</span>
+<span class="go">endmatch, knobfile=knobs.txt;</span>
 </pre></div>
-</div>
-<p>Is equivalent to:</p>
-<div class="highlight-python"><pre>match, sequence=lhc;
-constraint, betx=3, range=#e;
-vary, name=K1, upper=3;
-vary, name=K2, step=1e-6;
-endmatch;</pre>
 </div>
 </dd></dl>
 
 <dl class="method">
+<dt id="cern.madx.madx.select">
+<tt class="descname">select</tt><big>(</big><em>self</em>, <em>flag</em>, <em>columns</em>, <em>pattern=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.select" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="cern.madx.madx.survey">
-<tt class="descname">survey</tt><big>(</big><em>sequence, pattern=['full'], columns='name,l,s,angle,x,y,z,theta', madrange='', fname='', retdict=False, use=True</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.survey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.survey" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">survey</tt><big>(</big><em>self, sequence, pattern=['full'], columns='name,l,s,angle,x,y,z,theta', madrange='', fname='', retdict=False, use=True</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.survey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.survey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs select+use+survey on the sequence selected</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -299,7 +320,7 @@ endmatch;</pre>
 
 <dl class="method">
 <dt id="cern.madx.madx.twiss">
-<tt class="descname">twiss</tt><big>(</big><em>sequence, pattern=['full'], columns='name,s,betx,bety,x,y,dx,dy,px,py,mux,muy,l,k1l,angle,k2l', madrange='', fname='', retdict=False, betx=None, bety=None, alfx=None, alfy=None, twiss_init=None, chrom=True, use=True</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.twiss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.twiss" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">twiss</tt><big>(</big><em>self, sequence, pattern=['full'], columns='name,s,betx,bety,x,y,dx,dy,px,py,mux,muy,l,k1l,angle,k2l', madrange='', fname='', retdict=False, betx=None, bety=None, alfx=None, alfy=None, twiss_init=None, chrom=True, use=True</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.twiss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.twiss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs select+use+twiss on the sequence selected</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -309,7 +330,7 @@ endmatch;</pre>
 <li><strong>sequence</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#string" title="(in Python v2.7)"><em>string</em></a>) &#8211; name of sequence</li>
 <li><strong>fname</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#string" title="(in Python v2.7)"><em>string</em></a>) &#8211; name of file to store tfs table</li>
 <li><strong>pattern</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; pattern to include in table</li>
-<li><strong>columns</strong> (<em>list/string</em>) &#8211; columns to include in table</li>
+<li><strong>columns</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#string" title="(in Python v2.7)"><em>string</em></a>) &#8211; columns to include in table, can also be a list of strings</li>
 <li><strong>retdict</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; if true, returns tables as dictionary types</li>
 <li><strong>twiss_init</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; dictionary of twiss initialization variables</li>
 <li><strong>use</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Call use before aperture.</li>
@@ -320,6 +341,16 @@ endmatch;</pre>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.use">
+<tt class="descname">use</tt><big>(</big><em>self</em>, <em>sequence</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.use"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.use" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cern.madx.madx.verbose">
+<tt class="descname">verbose</tt><big>(</big><em>self</em>, <em>switch</em><big>)</big><a class="reference internal" href="../_modules/cern/madx.html#madx.verbose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cern.madx.madx.verbose" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
