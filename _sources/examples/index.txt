@@ -6,6 +6,4 @@ Examples
 
    demo_plot_beta
 
-   demo_cpymad
-
    demo_madx
