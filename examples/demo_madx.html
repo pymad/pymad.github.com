@@ -1,0 +1,170 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cern.madx &mdash; PyMad 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="PyMad 0.2.0 documentation" href="../index.html" />
+    <link rel="up" title="Examples" href="index.html" />
+    <link rel="next" title="PyMad API" href="../api/index.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="demo_cpymad.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../_static/pymad-logo-text.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../api/index.html" title="PyMad API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="demo_cpymad.html" title="&lt;no title&gt;"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Examples</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="demo_cpymad.html"
+                        title="previous chapter">&lt;no title&gt;</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../api/index.html"
+                        title="next chapter">PyMad API</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/examples/demo_madx.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cern-madx">
+<h1>cern.madx<a class="headerlink" href="#cern-madx" title="Permalink to this headline">¶</a></h1>
+<p>Several users have been most interested in having direct access to Mad-X inside Python, instead of using models.</p>
+<p>The following example is similar to the LHC default example found at /afs/cern.ch/eng/lhc/optics/V6.503/job.sample.madx:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">cern</span> <span class="kn">import</span> <span class="n">madx</span>
+
+<span class="c"># create a Mad-X running instance:</span>
+<span class="n">m</span><span class="o">=</span><span class="n">madx</span><span class="o">.</span><span class="n">madx</span><span class="p">(</span><span class="n">histfile</span><span class="o">=</span><span class="s">&#39;job.sample.madx&#39;</span><span class="p">)</span>
+<span class="c"># Note, the commands that were sent to Mad-X are written to the file job.sample.madx</span>
+
+<span class="c"># Turn off echoing:</span>
+<span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;option,-echo&#39;</span><span class="p">)</span>
+
+<span class="c"># load the sequence/strength files:</span>
+<span class="n">afs</span><span class="o">=</span><span class="s">&#39;/afs/cern.ch/eng/lhc/optics/V6.503/&#39;</span>
+<span class="n">m</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">afs</span><span class="o">+</span><span class="s">&#39;V6.5.seq&#39;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">afs</span><span class="o">+</span><span class="s">&#39;V6.5.inj.str&#39;</span><span class="p">)</span>
+
+<span class="c"># set variables in IR on/off:</span>
+<span class="n">vars_on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;X1&#39;</span><span class="p">,</span> <span class="s">&#39;X2&#39;</span><span class="p">,</span> <span class="s">&#39;X5&#39;</span><span class="p">,</span> <span class="s">&#39;X8&#39;</span><span class="p">,</span>
+    <span class="s">&#39;SEP1&#39;</span><span class="p">,</span> <span class="s">&#39;SEP2&#39;</span><span class="p">,</span> <span class="s">&#39;SEP5&#39;</span><span class="p">,</span> <span class="s">&#39;SEP8&#39;</span><span class="p">]</span>
+<span class="n">vars_off</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;ATLAS&#39;</span><span class="p">,</span> <span class="s">&#39;ALICE&#39;</span><span class="p">,</span> <span class="s">&#39;CMS&#39;</span><span class="p">,</span> <span class="s">&#39;LHCB&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">vars_on</span><span class="p">:</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;ON_&#39;</span><span class="o">+</span><span class="n">var</span><span class="o">+</span><span class="s">&#39;:=1&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">vars_off</span><span class="p">:</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;ON_&#39;</span><span class="o">+</span><span class="n">var</span><span class="o">+</span><span class="s">&#39;:=0&#39;</span><span class="p">)</span>
+
+<span class="c"># set beam parameters:</span>
+<span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s">&#39;beam, sequence=LHCB1, particle=PROTON, pc=450&#39;</span><span class="p">)</span>
+
+<span class="c"># call twiss:</span>
+<span class="n">table</span><span class="p">,</span><span class="n">parameters</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span><span class="s">&#39;LHCB1&#39;</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;s&#39;</span><span class="p">,</span><span class="s">&#39;name&#39;</span><span class="p">,</span><span class="s">&#39;betx&#39;</span><span class="p">,</span><span class="s">&#39;bety&#39;</span><span class="p">])</span>
+
+<span class="c"># plot table:</span>
+<span class="kn">import</span> <span class="nn">pylab</span>
+<span class="n">pylab</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">s</span><span class="p">,</span><span class="n">table</span><span class="o">.</span><span class="n">betx</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">r&#39;$beta_x$&#39;</span><span class="p">)</span>
+<span class="n">pylab</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">s</span><span class="p">,</span><span class="n">table</span><span class="o">.</span><span class="n">bety</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">r&#39;$beta_y$&#39;</span><span class="p">)</span>
+<span class="n">pylab</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">pylab</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../api/index.html" title="PyMad API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="demo_cpymad.html" title="&lt;no title&gt;"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Examples</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Y.I. Levinsen, K. Fuchsberger (CERN) .
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
